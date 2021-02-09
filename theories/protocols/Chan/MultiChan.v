@@ -59,7 +59,7 @@ Section MultiChan.
             Outvec okI (fun j => x <-- Read (tnth okR j) ;; Ret x) ].
 
   Theorem MultiChan_Security i o leakR okR :
-    real i o leakR okR =0 (leakI <- newvec q @ 0 ;; okI <- newvec q @ TUnit ;; pars [:: ideal i o leakI okI; Sim leakI okI leakR okR]).
+    real i o leakR okR ~= (leakI <- newvec q @ 0 ;; okI <- newvec q @ TUnit ;; pars [:: ideal i o leakI okI; Sim leakI okI leakR okR]).
     symmetry.
 
     (* First, eliminate ideal chans *)

@@ -14,7 +14,7 @@ Qed.
   Lemma samp_pair {t'} {t} (x : chan t') (c d : chan t) :
     pars [::
             Out c (_ <-- Read x ;; Unif t);
-         Out d (_ <-- Read x ;; Unif t)] =0
+         Out d (_ <-- Read x ;; Unif t)] ~=
                             e <- new (t ** t) ;;
     pars [::
             Out e (_ <-- Read x ;; Unif (t ** t)) ;
@@ -69,7 +69,7 @@ Qed.
             Out c1 (_ <-- Read i ;; Unif L);
             Out c2 (_ <-- Read i ;; Unif L)
          ]
-    =0
+    ~=
        c1' <- new L ;;
        c2' <- new L ;;
        pars [::
@@ -137,7 +137,7 @@ Qed.
             Out c1 (_ <-- Read i ;; Unif L),
             Out c2 (_ <-- Read i ;; Unif L) & rs
          ]
-    =0
+    ~=
        c1' <- new L ;;
        c2' <- new L ;;
        pars [::
@@ -330,7 +330,7 @@ Section OneOutOf4.
             One4_sender ot_m1 ot_m2 ot_m3 ready send;
             One4_recv ready ot_i1 ot_i2 ot_i3 ot_o1 ot_o2 ot_o3 send ].
             
-  Lemma ot14_simp : OT14_real =0 OT14_real_simpl.
+  Lemma ot14_simp : OT14_real ~= OT14_real_simpl.
     etransitivity.
     repeat ltac:(apply EqNew; intro => _ _).
     rewrite /OTIdeal.
@@ -517,7 +517,7 @@ Qed.
             Out c0 (Samp (uniform L : Dist L))] ].
 
 
-Lemma ot_simpl_rerandomize : OT14_real_simpl =0 OT14_real_rerandomize.
+Lemma ot_simpl_rerandomize : OT14_real_simpl ~= OT14_real_rerandomize.
     etransitivity.
     repeat ltac:(apply EqNew; intro => _ _).
     swap_tac 0 9.
@@ -824,7 +824,7 @@ c1 <- new L;;
           Out c0 (Samp (uniform L : Dist L))] ].
 
 Lemma OT14_real_simE :
-  OT14_real_rerandomize =0
+  OT14_real_rerandomize ~=
                            o <- new L ;;
                            pars [::
                                    OT14Ideal _ ot14_i ot14_m ot14_o;
@@ -873,7 +873,7 @@ Lemma OT14_real_simE :
 Qed.
 
 Theorem OT14_security :
-  OT14_real =0 
+  OT14_real ~= 
                            o <- new L ;;
                            pars [::
                                    OT14Ideal _ ot14_i ot14_m ot14_o;

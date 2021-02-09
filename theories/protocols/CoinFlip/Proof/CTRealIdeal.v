@@ -6,17 +6,17 @@ Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Ipdl.T
 Require Import CoinFlip CFold CFSimComp CFReal.
 
 Lemma pars_replace r2 r1 rs :
-  pars [:: r1 & rs] =0 pars [:: r2 & rs] ->
-  pars [:: r1 & rs] =0 pars [:: r2 & rs].
+  pars [:: r1 & rs] ~= pars [:: r2 & rs] ->
+  pars [:: r1 & rs] ~= pars [:: r2 & rs].
   done.
 Qed.
 
 Lemma new_pars_replace_elim t r1 r2 rs rs' :
-  (forall c, pars [:: Out c r1 & rs c] =0 pars [:: Out c r1 & rs']) ->
-  (forall c, pars [:: Out c r2 & rs c] =0 pars [:: Out c r2 & rs']) ->
+  (forall c, pars [:: Out c r1 & rs c] ~= pars [:: Out c r1 & rs']) ->
+  (forall c, pars [:: Out c r2 & rs c] ~= pars [:: Out c r2 & rs']) ->
   (forall x, In (rxn_inputs r1) x -> In (pars rs') x) ->
   (forall x, In (rxn_inputs r2) x -> In (pars rs') x) ->
-  (x <- new t ;; pars [:: Out x r1 & rs x]) =0 (x <- new t ;; pars [:: Out x r2 & rs x]).
+  (x <- new t ;; pars [:: Out x r1 & rs x]) ~= (x <- new t ;; pars [:: Out x r2 & rs x]).
   intros.
   etransitivity.
   apply EqNew => c _ _.
@@ -41,7 +41,7 @@ Lemma CFRealIdealE (k : nat) {n}
            (advOpened : (n.+2).-tuple ((n.+2).-tuple (chan k))) :
   ~~ honest ord0 ->
   honest ord_max ->
-  CFRealSimpl k honest out advCommit advOpen advCommitted advOpened =0
+  CFRealSimpl k honest out advCommit advOpen advCommitted advOpened ~=
   SimComp_simpl7 k honest advCommit advOpen advCommitted advOpened out.
   intros.
   rewrite /CFRealSimpl.
@@ -94,7 +94,7 @@ Lemma CoinFlip_main (k : nat) {n}
            (advOpened : (n.+2).-tuple ((n.+2).-tuple (chan k))) :
   ~~ honest ord0 ->
   honest ord_max ->
-  CFReal k _ honest out advCommit advOpen advCommitted advOpened =0
+  CFReal k _ honest out advCommit advOpen advCommitted advOpened ~=
     leak <- new k ;; 
     ok <- new TUnit ;; 
     pars [::

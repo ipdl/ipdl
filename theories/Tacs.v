@@ -168,7 +168,7 @@ Inductive PointsTo : forall t, rset -> chan t -> rxn t -> Prop :=
 Lemma pointsTo_inline t (c : chan t) rxn (r : rset) {t'} (c' : chan t') k :
   PointsTo t r c rxn ->
   isDet _ rxn ->
-  Out c' (x <-- Read c ;; k x) ||| r =0
+  Out c' (x <-- Read c ;; k x) ||| r ~=
   Out c' (x <-- rxn ;; k x) ||| r.
   intros.
   induction H; subst.
@@ -196,7 +196,7 @@ Lemma pars_pointsTo_inline t (c : chan t) rxn (rs : seq rset) {t'} (c' : chan t'
   PointsTo t (pars rs) c rxn ->
   isDet _ rxn ->
   pars [::
-    Out c' (x <-- Read c ;; k x) & rs] =0
+    Out c' (x <-- Read c ;; k x) & rs] ~=
   pars [::
     Out c' (x <-- rxn ;; k x) & rs].
   intros.
@@ -239,13 +239,13 @@ Require Import Lib.Crush.
 
 Ltac rename_to j :=
   match goal with
-  | [ |- (newvec ?i ?t ?k) =0 ?h] =>
-    change (j <- newvec i @ t ;; k j =0 h) end.
+  | [ |- (newvec ?i ?t ?k) ~= ?h] =>
+    change (j <- newvec i @ t ;; k j ~= h) end.
 
 Lemma mkdep_pointsTo {t1 t2} (c1 : chan t1) (c2 : chan t2) R r r' :
   PointsTo _ R c1 r ->
   List.Forall (In (rxn_inputs r')) (rxn_inputs r) ->
-  (Out c2 r') ||| R =0
+  (Out c2 r') ||| R ~=
   (Out c2 (_ <-- Read c1 ;; r')) ||| R. 
   intros.
   induction H.
@@ -274,7 +274,7 @@ Qed.
 Lemma pars_mkdep_pointsTo {t1 t2} (c1 : chan t1) (c2 : chan t2) R r r' :
   PointsTo _ (pars R) c1 r ->
   List.Forall (In (rxn_inputs r')) (rxn_inputs r) ->
-  pars [:: Out c2 r' & R] =0
+  pars [:: Out c2 r' & R] ~=
   pars [:: (Out c2 (_ <-- Read c1 ;; r')) & R]. 
   intros; rewrite pars_cons.
   rewrite mkdep_pointsTo.
@@ -289,7 +289,7 @@ Lemma trans_dep_pointsTo {t1 t2 t3} (a : chan t1) (m : chan t3) (r1 : rxn t1) r2
   In  (rxn_inputs r1) (mkChan m) ->
   In  (rxn_inputs r2) (mkChan a) ->
   wfRxn r2 ->
-  Out b r2 ||| R =0 Out b (_ <-- Read m;; r2) ||| R.
+  Out b r2 ||| R ~= Out b (_ <-- Read m;; r2) ||| R.
   intros.
   induction H.
   rewrite ParSym.
@@ -319,7 +319,7 @@ Lemma pars_trans_dep_pointsTo {t1 t2 t3} (a : chan t1) (m : chan t3) (r1 : rxn t
   In (rxn_inputs r2) (mkChan a)  ->
   wfRxn r2 ->
   PointsTo _ (pars R) a r1 ->
-  pars [:: Out b r2 & R] =0 pars [:: Out b (_ <-- Read m;; r2) & R].
+  pars [:: Out b r2 & R] ~= pars [:: Out b (_ <-- Read m;; r2) & R].
   intros.
   rewrite !pars_cons.
   intros; eapply trans_dep_pointsTo.
@@ -335,7 +335,7 @@ Qed.
 Lemma pars_trans_dep_include {t1 t2} (a : chan t1) (r1 : rxn t1) r2 (b : chan t2) R :
   List.In (mkChan a) (rxn_inputs r2) ->
   PointsTo _ (pars R) a r1 ->
-  pars [:: Out b r2 & R] =0 pars [:: Out b (_ <-- r1;; r2) & R].
+  pars [:: Out b r2 & R] ~= pars [:: Out b (_ <-- r1;; r2) & R].
 *)
 
 (*    new tactics for automation *)
@@ -418,7 +418,7 @@ Ltac find_inline_info rs K := find_inline_info_rec rs 0 K.
 
 Lemma pars_inline_rev {t t'} (b : chan t') (c : chan t) k r rs :
   isDet _ r ->
-  pars [:: Out c r, Out b (x <-- Read c ;; k x) & rs] =0
+  pars [:: Out c r, Out b (x <-- Read c ;; k x) & rs] ~=
   pars [:: Out c r, Out b (x <-- r ;; k x) & rs].
   intros.
   swap_tac 0 1.
@@ -447,7 +447,7 @@ Ltac do_inline :=
 
 Lemma Eq_Outvec {I} {t} (v : I.-tuple (chan t)) f1 f2 :
   (forall j, f1 j =r f2 j)  ->
-  Outvec v f1 =0 Outvec v f2.
+  Outvec v f1 ~= Outvec v f2.
   intros; apply EqProt_big_r; intros; apply EqOut.
   apply H.
 Qed.

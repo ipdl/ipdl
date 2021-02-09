@@ -24,13 +24,13 @@ Definition CPA1 {msg ctxt key : nat} (q : nat) (genK : Dist key) (enc : msg -> k
                       c <-- Samp (enc [tuple of nseq _ false] K) ;;
                       Ret c)].
 
-Definition CPA_Secure {msg ctxt key : nat} (q : nat) (genK : Dist key) (enc : msg -> key -> Dist ctxt) := forall (i : q.-tuple (chan msg)) (o : q.-tuple (chan ctxt)), CPA0 q genK enc i o =0 CPA1 q genK enc i o.
+Definition CPA_Secure {msg ctxt key : nat} (q : nat) (genK : Dist key) (enc : msg -> key -> Dist ctxt) := forall (i : q.-tuple (chan msg)) (o : q.-tuple (chan ctxt)), CPA0 q genK enc i o ~= CPA1 q genK enc i o.
 
 Definition dec_correct {msg ctxt key : nat} (genK : Dist key) (enc : msg -> key -> Dist ctxt) (dec : ctxt -> key -> msg) := forall (k : chan key) (c : chan ctxt) (i : chan msg) (o : chan msg),
     pars [::
             Out k (Samp genK);
             Out c (x <-- Read k ;; m <-- Read i ;; c <-- Samp (enc m x) ;; Ret c);
-            Out o (x <-- Read c ;; y <-- Read k ;; Ret (dec x y)) ] =0 
+            Out o (x <-- Read c ;; y <-- Read k ;; Ret (dec x y)) ] ~= 
     pars [::
             Out k (Samp genK);
             Out c (x <-- Read k ;; m <-- Read i ;; c <-- Samp (enc m x) ;; Ret c);
@@ -40,7 +40,7 @@ Lemma Multi_dec_correct {msg ctxt key : nat} q (genK : Dist key) (enc : msg -> k
     pars [::
             Out k (Samp genK);
             Outvec c (fun j => x <-- Read k ;; m <-- Read (tnth i j) ;; c <-- Samp (enc m x) ;; Ret c);
-            Outvec o (fun j => x <-- Read (tnth c j) ;; y <-- Read k ;; Ret (dec x y)) ] =0 
+            Outvec o (fun j => x <-- Read (tnth c j) ;; y <-- Read k ;; Ret (dec x y)) ] ~= 
     pars [::
             Out k (Samp genK);
             Outvec c (fun j => x <-- Read k ;; m <-- Read (tnth i j) ;; c <-- Samp (enc m x) ;; Ret c);

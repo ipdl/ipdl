@@ -146,7 +146,7 @@ Lemma filter_none {A} (xs : seq A) (P : pred A) :
 Qed.
 
 Lemma New_in_pars t k rs :
-  pars [:: New t k & rs] =0 New t (fun x => pars [:: k x & rs]).
+  pars [:: New t k & rs] ~= New t (fun x => pars [:: k x & rs]).
   rewrite pars_cons.
   rewrite NewComp.
   apply EqNew; intros.
@@ -157,7 +157,7 @@ Qed.
 
 Inductive list_eqprot : list rset -> list rset -> Prop :=
   | nil_equiv : list_eqprot nil nil
-  | cons_equiv x y s t : x =0 y -> list_eqprot s t -> list_eqprot (x :: s) (y :: t).
+  | cons_equiv x y s t : x ~= y -> list_eqprot s t -> list_eqprot (x :: s) (y :: t).
 
 Instance list_eqprot_refl : Reflexive list_eqprot.
    intro.
@@ -432,7 +432,7 @@ Qed.
    
 Lemma pars_undep {t1 t2} (c1 : chan t1) (c2 : chan t2) rs r r' :
     List.Forall (In (rxn_inputs r')) (rxn_inputs r) ->
-  (pars [:: Out c2 (_ <-- Read c1;; r'), Out c1 r & rs]) =0
+  (pars [:: Out c2 (_ <-- Read c1;; r'), Out c1 r & rs]) ~=
   (pars [:: Out c2 (r'), Out c1 r & rs]).
   intros.
   rewrite !pars_cons.
@@ -447,7 +447,7 @@ Qed.
 
 Lemma pars_mkdep {t1 t2} (c1 : chan t1) (c2 : chan t2) rs r r' :
     List.Forall (In (rxn_inputs r')) (rxn_inputs r) ->
-  (pars [:: Out c2 (r'), Out c1 r & rs]) =0
+  (pars [:: Out c2 (r'), Out c1 r & rs]) ~=
   (pars [:: Out c2 (_ <-- Read c1;; r'), Out c1 r & rs]). 
   intros; symmetry; apply pars_undep; done.
 Qed.
@@ -457,7 +457,7 @@ Lemma pars_tr {t1 t2 t3} (a : chan t1) (b : chan t2) (r1 : rxn t1) (r2 : rxn t2)
        In (rxn_inputs r2) (mkChan a) ->
        wfRxn r2 ->
        pars [::
-               Out a r1, Out b r2 & rs] =0
+               Out a r1, Out b r2 & rs] ~=
        pars [::
                Out a r1, Out b (_ <-- Read m ;; r2) & rs].
   intros; rewrite !pars_cons !ParAssoc.
@@ -470,16 +470,16 @@ Qed.
 
 Lemma new_pars_remove {t1} (r : rxn t1) rs :
   (forall x, In (rxn_inputs r) x -> In (pars rs) x) ->
-  (a <- new t1 ;; pars [:: Out a r & rs]) =0 pars rs.
+  (a <- new t1 ;; pars [:: Out a r & rs]) ~= pars rs.
   intros.
   setoid_rewrite pars_cons.
   rewrite RRemove; done.
 Qed.
 
 Lemma generalize_pars_eq2_1 r1 r2 r1' r2' :
-  (forall rs, pars [:: r1, r2 & rs] =0 pars [:: r1', r2' & rs] ) ->
+  (forall rs, pars [:: r1, r2 & rs] ~= pars [:: r1', r2' & rs] ) ->
   forall rs1 rs2,
-    pars ([:: r1] ++ rs1 ++ [:: r2] ++ rs2) =0 pars (r1' :: rs1 ++ [:: r2'] ++ rs2).
+    pars ([:: r1] ++ rs1 ++ [:: r2] ++ rs2) ~= pars (r1' :: rs1 ++ [:: r2'] ++ rs2).
   intros.
   induction rs1.
   simpl.

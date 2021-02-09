@@ -52,7 +52,7 @@ Lemma cfold2_det_copy {n} {t t' : type} (xs : (n.+1).-tuple (chan t)) (f : t' ->
   pars [::
           cfold xs f init ys1; 
           cfold xs f init ys2 
-                ] =0
+                ] ~=
   pars [::
           cfold xs f init ys1; 
           copy_tup ys1 ys2].
@@ -157,7 +157,7 @@ Lemma ltSS (i j : nat) :
 Qed.
 
 Lemma cfoldS_r {n} {t t' : type} (xs : (n.+1).-tuple (chan t)) x (f : t' -> t -> t') init (ys : (n.+1).-tuple (chan t')) y :
-  cfold [tuple of rcons xs x] f init [tuple of rcons ys y] =0
+  cfold [tuple of rcons xs x] f init [tuple of rcons ys y] ~=
   pars [::
           cfold xs f init ys;
           Out y (
@@ -257,7 +257,7 @@ Lemma new_cfold_remove {n} {t t' : type} (xs : (n.+1).-tuple (chan t)) (f : t' -
   (forall j, In (pars rs) (mkChan (tnth xs j))) ->
   ys <- newvec n.+1 @ t' ;;
   pars [::
-          cfold xs f init ys & rs] =0 pars rs.
+          cfold xs f init ys & rs] ~= pars rs.
   intros.
   induction n.
   simpl.
@@ -327,7 +327,7 @@ Qed.
 Lemma pars_undep_cfold_input {t t' t'' : type} {n} (xs : (n.+1).-tuple (chan t)) (f : t' -> t -> t') init ys (a : chan t'') r (i : 'I_(n.+1)) rs :
   pars [::
           Out a (_ <-- Read (tnth xs i) ;; _ <-- Read (tnth ys ord_max) ;; r),
-          cfold xs f init ys & rs ] =0
+          cfold xs f init ys & rs ] ~=
   pars [::
           Out a (_ <-- Read (tnth ys ord_max) ;; r),
           cfold xs f init ys & rs ].

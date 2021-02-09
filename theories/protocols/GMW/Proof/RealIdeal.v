@@ -49,7 +49,7 @@ Lemma GMWProof_core {A B n} (c : Circ A B n)
             (fun j : 'I_A => _ <-- Read (tnth inA j);; y <-- Unif TBool;; Ret y);
           Outvec b2a
             (fun j : 'I_B => _ <-- Read (tnth inB j);; y <-- Unif TBool;; Ret y)
-         ] =0 
+         ] ~= 
     pars [::
             Outvec w (fun j => evalOp inA inB (tuple_trunc w j) (c j));
             \||_(j < n) sim_perform_op (c j) (tnth ot_bits j) a2a b2a (tuple_trunc wA j) (tnth wA j);
@@ -357,7 +357,7 @@ Lemma GMWProof' {A B n o} (c : Circ A B n) (outs : circOuts n o)
       (AIn : A.-tuple (chan TBool)) (BIn : B.-tuple (chan TBool)) 
       (AOut BOut : o.-tuple (chan TBool)) (leakOTBits : n.-tuple (chan TBool)) (leak_AIn leakInit_a2b : A.-tuple (chan TBool)) (leakInit_b2a : B.-tuple (chan TBool)) (leakFinal_b2a : o.-tuple (chan TBool)) :
 
-  GMWReal_simpl c outs AIn BIn AOut BOut leakOTBits leak_AIn leakInit_a2b leakInit_b2a leakFinal_b2a =0 
+  GMWReal_simpl c outs AIn BIn AOut BOut leakOTBits leak_AIn leakInit_a2b leakInit_b2a leakFinal_b2a ~= 
   GMWIdeal_sim_comp c outs AIn BIn AOut BOut leakOTBits leak_AIn leakInit_a2b leakInit_b2a leakFinal_b2a.
   rewrite /GMWReal_simpl.
   rewrite /GMWIdeal_sim_comp.
@@ -577,7 +577,7 @@ Lemma GMWProof {A B n o} `{Inhabited 'I_n} `{Inhabited 'I_o} `{Inhabited 'I_A} `
       (AIn : A.-tuple (chan TBool)) (BIn : B.-tuple (chan TBool)) 
       (AOut BOut : o.-tuple (chan TBool)) (leakOTBits : n.-tuple (chan TBool)) (leak_AIn leakInit_a2b : A.-tuple (chan TBool)) (leakInit_b2a : B.-tuple (chan TBool)) (leakFinal_b2a : o.-tuple (chan TBool)) :
 
-  GMWReal c outs AIn BIn AOut BOut leakOTBits leak_AIn leakInit_a2b leakInit_b2a leakFinal_b2a =0 
+  GMWReal c outs AIn BIn AOut BOut leakOTBits leak_AIn leakInit_a2b leakInit_b2a leakFinal_b2a ~= 
   GMWIdeal_Sim c outs AIn BIn AOut BOut leakOTBits leak_AIn leakInit_a2b leakInit_b2a leakFinal_b2a.
   rewrite GMWReal_simplE.
   rewrite GMWIdeal_simE.

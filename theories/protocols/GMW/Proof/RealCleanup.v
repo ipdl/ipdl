@@ -7,8 +7,8 @@ Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Lib.Di
 Require Import GMWIdeal OTIdeal Circ GMWReal .
 
 Lemma withOT14_cong L k1 k2 :
-  (forall i m o, k1 i m o =0 k2 i m o ) ->
-  withOT14 L k1 =0 withOT14 L k2.
+  (forall i m o, k1 i m o ~= k2 i m o ) ->
+  withOT14 L k1 ~= withOT14 L k2.
   intros; rewrite /withOT14.
   apply EqNew => i _ _ .
   apply EqNew => m _ _ .
@@ -20,7 +20,7 @@ Qed.
 Lemma withOTs_newvec L leak I t k :
   withOTs L leak (fun s =>
                  x <- newvec I @ t ;;
-                 k x s) =0
+                 k x s) ~=
                            x <- newvec I @ t ;;
                            withOTs L leak (k x).
   induction L.
@@ -48,7 +48,7 @@ Qed.
 
 Lemma withOTs_pars_irrel L leak r rs :
   withOTs L leak (fun s =>
-                    pars [:: r & rs s]) =0
+                    pars [:: r & rs s]) ~=
   pars [:: r; withOTs L leak (fun s => pars (rs s))].                                               
   induction L.
   simpl.
@@ -71,7 +71,7 @@ Lemma withOTs_pars_irrel L leak r rs :
 Qed.
 
 Lemma withOT14_pars_irrel L r rs :
-  withOT14 L (fun i m o => pars [:: r & rs i m o]) =0
+  withOT14 L (fun i m o => pars [:: r & rs i m o]) ~=
   pars [:: r; withOT14 L (fun i m o => pars (rs i m o))].                                                      
   rewrite /withOT14.
   symmetry.
@@ -99,9 +99,9 @@ Add Parametric Morphism L : (withOT14 L)
 Qed.
 
 Lemma withOTs_cong L cs1 cs2 k1 k2 :
-  (forall l, k1 l =0 k2 l) ->
+  (forall l, k1 l ~= k2 l) ->
   cs1 = cs2 ->
-  withOTs L cs1 k1 =0 withOTs L cs2 k2.
+  withOTs L cs1 k1 ~= withOTs L cs2 k2.
   intros; subst; induction L; rewrite //=.
   apply withOT14_cong; intros.
   apply IHL.
@@ -143,7 +143,7 @@ Qed.
 
 Lemma newvec_withOTs I t L cs k :
   x <- newvec I @ t ;;
-  withOTs L cs (fun s => k x s) =0
+  withOTs L cs (fun s => k x s) ~=
   withOTs L cs (fun s =>
                   x <- newvec I @ t ;;
                   k x s).
@@ -187,7 +187,7 @@ Lemma performOuts_compE {n o} `{Inhabited 'I_n} `{Inhabited 'I_o}
            performOuts outs wA oA a2b b2a;
            performOuts outs wB oB b2a a2b;
            copy_tup b2a leak_b2a
-       ] =0
+       ] ~=
    performOuts_comp outs wA wB oA oB leak_b2a.
   rewrite /performOuts_comp.
   etransitivity.
@@ -238,7 +238,7 @@ Definition jointInit {A B} (inA a2b a2a : A.-tuple (chan TBool)) (inB b2a b2b : 
 Lemma jointInitE {A B} (inA a2b a2a : A.-tuple (chan TBool)) (inB b2a b2b : B.-tuple (chan TBool)) (leakAdv leaka2b : A.-tuple (chan TBool)) (leakb2a : B.-tuple (chan TBool)) :
   pars [::
           initAlice _ _ inA leakAdv a2b leaka2b a2a b2a leakb2a;
-          initBob _ inB b2a b2b] =0 jointInit inA a2b a2a inB b2a b2b leakAdv leaka2b leakb2a.
+          initBob _ inB b2a b2b] ~= jointInit inA a2b a2a inB b2a b2b leakAdv leaka2b leakb2a.
   rewrite /initAlice.
   rewrite pars_pars //=.
   rewrite /initBob.
@@ -275,7 +275,7 @@ Lemma and_compE (Ax Ay Bx By Az Bz : chan TBool) (leakBit : chan TBool) :
   withOT14 TBool (fun i m o =>
                 pars [::
                         alice_and Ax Ay leakBit m Az;
-                        bob_and Bx By i o Bz ]) =0
+                        bob_and Bx By i o Bz ]) ~=
   fold_and Ax Ay Bx By Az Bz leakBit.
   rewrite /fold_and.
   rewrite /withOT14.
@@ -363,7 +363,7 @@ Lemma fold_opE  {A B n} (c : Circ A B n) a2a b2a_init a2b_init b2b wA wB leakOTs
       (\||_(j < n) withOT14 _ (fun i m o =>
                               pars [::
                                       performOp alice (c j) (mkOTChannels i m o (tnth leakOTs j)) a2a b2a_init (tuple_trunc wA j) (tnth wA j);
-                                   performOp bob (c j) (mkOTChannels i m o (tnth leakOTs j)) a2b_init b2b (tuple_trunc wB j) (tnth wB j) ])) =0
+                                   performOp bob (c j) (mkOTChannels i m o (tnth leakOTs j)) a2b_init b2b (tuple_trunc wB j) (tnth wB j) ])) ~=
       \||_(j < n) fold_op a2a a2b_init b2a_init b2b (tuple_trunc wA j) (tuple_trunc wB j) (tnth wA j) (tnth wB j) (tnth leakOTs j) (c j).
   apply EqProt_big_r => x _ _.
   destruct (c x); simpl.
@@ -375,7 +375,7 @@ Lemma fold_opE  {A B n} (c : Circ A B n) a2a b2a_init a2b_init b2b wA wB leakOTs
 Qed.
 
 Lemma withOTs_big {n} leakOTs f :
-  withOTs n leakOTs (fun ots => \||_(j < n) (f j (tnth ots j))) =0
+  withOTs n leakOTs (fun ots => \||_(j < n) (f j (tnth ots j))) ~=
   \||_(j < n) withOT14 _ (fun i m o => f j (mkOTChannels i m o (tnth leakOTs j))).
   induction n.
   rewrite //= !big_ord0 //=.
@@ -418,7 +418,7 @@ Lemma fold_opE1 {A B n} (c : Circ A B n) a2a b2a_init a2b_init b2b wA wB leakOTs
       (\||_(j < n) withOT14 _ (fun i m o =>
                               pars [::
                                       performOp alice (c j) (mkOTChannels i m o (tnth leakOTs j)) a2a b2a_init (tuple_trunc wA j) (tnth wA j);
-                                   performOp bob (c j) (mkOTChannels i m o (tnth leakOTs j)) a2b_init b2b (tuple_trunc wB j) (tnth wB j) ])) =0
+                                   performOp bob (c j) (mkOTChannels i m o (tnth leakOTs j)) a2b_init b2b (tuple_trunc wB j) (tnth wB j) ])) ~=
 
        withOTs _ leakOTs (fun ots =>
                             \||_(j < n) pars [::
@@ -454,7 +454,7 @@ Section Simpl.
           performOuts_comp outs wA wB AOut BOut leakFinal_b2a].
 
   Lemma GMWReal_simplE :
-    GMWReal c outs AIn BIn AOut BOut leakOTs leak_AIn leakInit_a2b leakInit_b2a leakFinal_b2a =0 GMWReal_simpl.
+    GMWReal c outs AIn BIn AOut BOut leakOTs leak_AIn leakInit_a2b leakInit_b2a leakFinal_b2a ~= GMWReal_simpl.
     symmetry; rewrite /GMWReal_simpl.
     etransitivity.
     repeat ltac:(apply EqNew_vec; intro => _ _).

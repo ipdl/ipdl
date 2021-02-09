@@ -113,7 +113,7 @@ c4 <- new D;;
 Out o (x <-- Read i;; m0 <-- Read m;; Ret (m0 # x : TBool))
     ||| OT_trapdoor_simp_r.
 
-  Lemma OT_trapdoor_simpE : OT_trapdoor =0 OT_trapdoor_simp.
+  Lemma OT_trapdoor_simpE : OT_trapdoor ~= OT_trapdoor_simp.
     rewrite /OT_trapdoor.
     rewrite /TD_Snd.
     setoid_rewrite newPars.
@@ -302,7 +302,7 @@ Definition OT_trapdoor_HCBitPairSim c_ek y1 y2 (b1 b2 : chan TBool) :=
                                                                     
 
 Lemma OT_trapdoor_simp_rE :
-  OT_trapdoor_simp_r =0
+  OT_trapdoor_simp_r ~=
                         withHCBitPairReal OT_trapdoor_HCBitPairSim.
   rewrite /withHCBitPairReal /OT_trapdoor_HCBitPairSim.
   rewrite /OT_trapdoor_simp_r.
@@ -422,7 +422,7 @@ Definition OT_trapdoor_OTSim (leakO : chan TBool) :=
                                                       }} )) ]).
 
 Lemma OT_trapdoor_OTSimE :
-  withHCBitPairIdeal OT_trapdoor_HCBitPairSim =0 (leakO <- new TBool ;; OT_trapdoor_OTSim leakO ||| OTIdeal _ i m leakO).
+  withHCBitPairIdeal OT_trapdoor_HCBitPairSim ~= (leakO <- new TBool ;; OT_trapdoor_OTSim leakO ||| OTIdeal _ i m leakO).
   symmetry.
   (* First, fold in the leakO *)
 
@@ -523,8 +523,8 @@ Qed.
 
   Lemma OT_Trapdoor_Security : 
   (forall c1 c2 c3, 
-  HCBitReal c1 c2 c3 =0 HCBitIdeal c1 c2 c3) ->
-    OT_trapdoor =0 (leakO <- new TBool ;; pars [:: OTIdeal _ i m o; OT_trapdoor_OTSim leakO; OTIdeal _ i m leakO] ).
+  HCBitReal c1 c2 c3 ~= HCBitIdeal c1 c2 c3) ->
+    OT_trapdoor ~= (leakO <- new TBool ;; pars [:: OTIdeal _ i m o; OT_trapdoor_OTSim leakO; OTIdeal _ i m leakO] ).
     intro.
     rewrite OT_trapdoor_simpE.
     rewrite /OT_trapdoor_simp.

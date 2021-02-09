@@ -140,7 +140,7 @@ Open Scope bool_scope.
 
   
 Lemma new_pars_pull {A} (r : rset) (f : (A -> rset) -> rset) `{NewLike _ f} (rs : A -> seq rset) :
-  f (fun c => pars [:: r & rs c]) =0 r ||| f (fun c => pars (rs c)).
+  f (fun c => pars [:: r & rs c]) ~= r ||| f (fun c => pars (rs c)).
   symmetry.
   rewrite newComp_r.
   apply newCong; intros.
@@ -150,7 +150,7 @@ Qed.
 
 
 Lemma newPars {A} (f : (A -> rset) -> rset) `{NewLike _ f} k rs :
-  pars [:: f k & rs] =0 f (fun c => pars [:: k c & rs]).
+  pars [:: f k & rs] ~= f (fun c => pars [:: k c & rs]).
   rewrite pars_cons.
   rewrite newComp.
   apply newCong; intros.

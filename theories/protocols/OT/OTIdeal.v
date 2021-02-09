@@ -39,7 +39,7 @@ Definition withOT14 (L : type) (P : chan (TBool ** TBool) -> chan ((L ** L) ** (
   pars [:: OT14Ideal _ i m o; P i m o ].
 
 Lemma withOT14_irrel (L : type) r :
-  withOT14 L (fun _ _ _ => r) =0 r.
+  withOT14 L (fun _ _ _ => r) ~= r.
   rewrite /withOT14.
   setoid_rewrite pars_cons.
   setoid_rewrite <- newComp.

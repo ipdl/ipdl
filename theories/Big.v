@@ -334,12 +334,12 @@ Qed.
     \||_(j < I) Out (tnth o j) (r j).
 
   Lemma Outvec0 {t} (o : 0.-tuple (chan t)) r :
-    Outvec o r =0 prot0.
+    Outvec o r ~= prot0.
     rewrite /Outvec big_ord0 //=.
   Qed.
 
   Lemma OutvecS {I} {t} (o : (I.+1).-tuple (chan t)) r :
-    Outvec o r =0 (Out (thead o) (r ord0)) ||| Outvec [tuple of behead o] (fun i => r (lift ord0 i)).
+    Outvec o r ~= (Out (thead o) (r ord0)) ||| Outvec [tuple of behead o] (fun i => r (lift ord0 i)).
     rewrite /Outvec big_ord_recl //=.
     apply EqCong.
     done.
@@ -355,7 +355,7 @@ Qed.
     Outvec o (fun j => copy (tnth i j)).
 
 Lemma copy_tupS {I} {t} (c1 c2 : (I.+1).-tuple (chan t)) :
-  copy_tup c1 c2 =0 Out (thead c2) (copy (thead c1)) ||| copy_tup [tuple of behead c1] [tuple of behead c2].
+  copy_tup c1 c2 ~= Out (thead c2) (copy (thead c1)) ||| copy_tup [tuple of behead c1] [tuple of behead c2].
   rewrite /copy_tup.
   rewrite OutvecS.
   apply EqCong.
@@ -451,8 +451,8 @@ Qed.
 
 
 Lemma pars_big_replace {I : eqType} (xs : seq I) (p : pred I) f1 f2 rs :
-  (forall i, i \in xs -> p i -> pars [:: f1 i & rs] =0 pars [:: f2 i & rs]) ->
-  pars [:: \||_(i <- xs | p i) f1 i & rs] =0 pars [:: \||_(i <- xs | p i) f2 i & rs].
+  (forall i, i \in xs -> p i -> pars [:: f1 i & rs] ~= pars [:: f2 i & rs]) ->
+  pars [:: \||_(i <- xs | p i) f1 i & rs] ~= pars [:: \||_(i <- xs | p i) f2 i & rs].
   intros.
   induction xs.
   rewrite !big_nil //=.
@@ -498,7 +498,7 @@ Lemma newvecS n t f :
 Qed.
 
 Lemma newvecS_r n t f :
-  newvec n.+1 t f =0 New t ( fun c =>
+  newvec n.+1 t f ~= New t ( fun c =>
                               newvec n t (fun tup => f [tuple of rcons tup c])).
   induction n.
   simpl.
@@ -524,7 +524,7 @@ Lemma newvecS_r n t f :
 Qed.
 
 Lemma newvec0 t f :
-  newvec 0 t f =0 f [tuple].
+  newvec 0 t f ~= f [tuple].
   rewrite /newvec //=.
 Qed.
                         
@@ -550,7 +550,7 @@ Notation "x <- 'newvec' n @ t ;; P" := (newvec n t (fun x => P)) (at level 41, r
 
 
 Lemma New_newvec {I} {t1 t2} P :
-  (x <- newvec I @ t1 ;; y <- new t2 ;; P x y) =0
+  (x <- newvec I @ t1 ;; y <- new t2 ;; P x y) ~=
   (y <- new t2;; x <- newvec I @ t1 ;; P x y). 
   move: t2 t1 P .
   induction I; intros.
@@ -569,7 +569,7 @@ Lemma New_newvec {I} {t1 t2} P :
 Qed.
 
 Lemma newvec_newvec I1 I2 t1 t2 P :
-  (x <- newvec I1 @ t1 ;; y <- newvec I2 @ t2 ;; P x y) =0
+  (x <- newvec I1 @ t1 ;; y <- newvec I2 @ t2 ;; P x y) ~=
   (y <- newvec I2 @ t2 ;; x <- newvec I1 @ t1 ;; P x y).
   move: t1 t2 I2 P.
   induction I1; intros.
@@ -588,8 +588,8 @@ Lemma EqNew_vec {I} {t} (r1 r2 : I.-tuple (chan t) -> rset) :
   (forall (v : I.-tuple (chan t)),
       (forall i, ~ In  (x <- newvec I @ t ;; r1 x) (mkChan (tnth v i))) ->
       (forall i, ~ In  (x <- newvec I @ t ;; r2 x) (mkChan (tnth v i))) ->
-      r1 v =0 r2 v) -> 
-  (x <- newvec I @ t ;; r1 x) =0 (x <- newvec I @ t ;; r2 x).
+      r1 v ~= r2 v) -> 
+  (x <- newvec I @ t ;; r1 x) ~= (x <- newvec I @ t ;; r2 x).
   move: r1 r2.
   induction I; intros.
   apply H; by case.
@@ -655,7 +655,7 @@ Lemma pars_big_fold {n} {t1 t2} (o : n.-tuple (chan t2)) (ri : 'I_n -> rxn t1) (
   pars [::
           Outvec o (fun j => x <-- Read (tnth c j) ;; ro j x),
         Outvec c ri &
-          rs ] =0 
+          rs ] ~= 
   pars [::
           Outvec o (fun j => x <-- ri j ;; ro j x)  & rs].
   induction n.
@@ -703,7 +703,7 @@ Lemma pars_big_tr_general {n1 n2 n3} {t1 t2 t3} (a : n1.-tuple (chan t1)) (b : n
   (forall j, wfRxn (r2 j)) ->
   pars [::
           Outvec a r1,
-       Outvec b r2 & rs] =0
+       Outvec b r2 & rs] ~=
   pars [::
           Outvec a r1,
           Outvec b (fun j => _ <-- Read (tnth m (f (f' j))) ;; r2 j) & rs].
@@ -732,13 +732,13 @@ Lemma pars_big_tr {n} {t1 t2 t3} (a : n.-tuple (chan t1)) (b : n.-tuple (chan t2
   (forall j, wfRxn (r2 j)) ->
   pars [::
           Outvec a r1,
-       Outvec b r2 & rs] =0
+       Outvec b r2 & rs] ~=
   pars [::
           Outvec a r1,
           Outvec b (fun j => _ <-- Read (tnth m j) ;; r2 j) & rs].
   intros.
   change (
-      pars ( [:: Outvec a r1, Outvec b r2 & rs]) =0
+      pars ( [:: Outvec a r1, Outvec b r2 & rs]) ~=
       pars ([:: Outvec a r1, Outvec b (fun j : 'I_n => _ <-- Read (tnth m (id (id j)));; r2 j)
           & rs] )).
   apply pars_big_tr_general.
@@ -749,7 +749,7 @@ Qed.
 
 Lemma big_remove {I} {t} r (P : rset) :
   (forall j x, In (rxn_inputs (r j)) x -> In P x) ->
-  (x <- newvec I @ t ;; \||_(j < I) Out (tnth x j) (r j)) ||| P =0 P.
+  (x <- newvec I @ t ;; \||_(j < I) Out (tnth x j) (r j)) ||| P ~= P.
   intros.
   induction I.
   rewrite //= big_ord0 -eq_0par //=.
@@ -784,7 +784,7 @@ Qed.
 
 Lemma pars_big_remove {I} {t} r rs :
   (forall j x, In (rxn_inputs (r j)) x -> In (pars rs) x) ->
-  (x <- newvec I @ t ;; pars [:: \||_(j < I) Out (tnth x j) (r j) & rs ]) =0 pars rs.
+  (x <- newvec I @ t ;; pars [:: \||_(j < I) Out (tnth x j) (r j) & rs ]) ~= pars rs.
   intros.
   setoid_rewrite pars_cons.
   rewrite -newComp.
@@ -798,7 +798,7 @@ Lemma pars_big_undep {n1 n2} {t1 t2} (a : n1.-tuple (chan t1)) (b : n2.-tuple (c
   pars [::
           Outvec b (fun j => _ <-- Read (tnth a (f j)) ;; r2 j),
           Outvec a r1 &
-          rs] =0
+          rs] ~=
   pars [::
           Outvec b r2,
           Outvec a r1 &
@@ -824,7 +824,7 @@ Lemma pars_undep_from_big {n} {t t'}
   List.Forall [eta In (rxn_inputs k)] (rxn_inputs (r i)) ->
   pars [::
           Out b (_ <-- Read (tnth c i) ;; k),
-          Outvec c r & rs] =0
+          Outvec c r & rs] ~=
   pars [::
           Out b (k),
           Outvec c r & rs]. 
@@ -853,7 +853,7 @@ Lemma pars_big_subst {I1 I2} {t1 t2} (a : I1.-tuple (chan t1)) (b : I2.-tuple (c
           Outvec a r1,
         Outvec b (fun j => x <-- Read (tnth a (f j)) ;; k j x) &
         rs ]
-  =0
+  ~=
      pars [::
           Outvec a r1,
         Outvec b (fun j => x <-- r1 (f j);; _ <-- Read (tnth a (f j)) ;; k j x) &
@@ -885,7 +885,7 @@ Lemma pars_big_inline {n1 n2} {t t'} (b : n1.-tuple (chan t'))
   pars [::
           Outvec b (fun j => x <-- Read (tnth c (f j)) ;; k j x),
         Outvec c r & rs]
-  =0     
+  ~=     
   pars [::
           Outvec b (fun j => x <-- r (f j) ;; k j x),
         Outvec c r & rs].
@@ -923,7 +923,7 @@ Lemma pars_big_inline_from_single {n} {t t'}
   pars [::
           Outvec b (fun j => x <-- Read c ;; k j x),
         Out c r & rs]
-  =0     
+  ~=     
   pars [::
           Outvec b (fun j => x <-- r ;; k j x),
         Out c r & rs].
@@ -948,7 +948,7 @@ Lemma pars_inline_from_big {n} {t t'}
   p i ->
   pars [::
           Out b (x <-- Read (tnth c i) ;; k x),
-          \||_(i < n | p i) (Out (tnth c i) (r i)) & rs] =0
+          \||_(i < n | p i) (Out (tnth c i) (r i)) & rs] ~=
   pars [::
           Out b (x <-- r i ;; k x),
           \||_(i < n | p i) (Out (tnth c i) (r i)) & rs].
@@ -975,7 +975,7 @@ Lemma pars_tr_from_big {n} {t1 t2 t3} (m : chan t3) (a : chan t1) (b : n.-tuple 
   In (rxn_inputs r1) (mkChan (tnth b j)) ->
   In (rxn_inputs (r2 j)) (mkChan m) ->
   wfRxn r1 ->
-  pars [:: Out a r1, \||_(i < n | p i) (Out (tnth b i) (r2 i)) & rs] =0
+  pars [:: Out a r1, \||_(i < n | p i) (Out (tnth b i) (r2 i)) & rs] ~=
   pars [:: Out a (_ <-- Read m ;; r1), \||_(i < n | p i) (Out (tnth b i) (r2 i)) & rs].                                           
   intros.
   rewrite !pars_cons.
@@ -1001,7 +1001,7 @@ Qed.
 
 
 Lemma bigpar_ord_recr {n} f :
-  \||_(j < n.+1) (f j) =0 (f ord_max) ||| \||_(j < n) f (widen_ord (leqnSn n) j).
+  \||_(j < n.+1) (f j) ~= (f ord_max) ||| \||_(j < n) f (widen_ord (leqnSn n) j).
     transitivity (\big[Par/prot0]_(0 <= i < n.+1) f (inord i)).
         rewrite big_mkord.
         apply EqProt_big_r; intros.
@@ -1082,7 +1082,7 @@ Ltac ssr_lia :=
   end.
 
 Lemma bigpar_ord_recl_D1 {n} (f : 'I_(n.+1) -> rset) :
-  \||_(j < n) f (lift ord0 j) =0 \||_(j < n.+1 | j != ord0) f j.
+  \||_(j < n) f (lift ord0 j) ~= \||_(j < n.+1 | j != ord0) f j.
   symmetry.
   rewrite bigpar_mkcond.
   simpl.
@@ -1092,7 +1092,7 @@ Lemma bigpar_ord_recl_D1 {n} (f : 'I_(n.+1) -> rset) :
 Qed.
 
 Lemma bigpar_ord_recl_cond {n} f p  :
-  \||_(i < n.+1 | p i) f i =0 (if p ord0 then f ord0 else prot0) ||| \||_(i < n | p (lift ord0 i)) f (lift ord0 i).
+  \||_(i < n.+1 | p i) f i ~= (if p ord0 then f ord0 else prot0) ||| \||_(i < n | p (lift ord0 i)) f (lift ord0 i).
   rewrite bigpar_mkcond.
   rewrite big_ord_recl.
   rewrite -bigpar_mkcond.
@@ -1100,7 +1100,7 @@ Lemma bigpar_ord_recl_cond {n} f p  :
 Qed.
 
 Lemma bigpar_ord_recr_cond {n} f p  :
-  \||_(i < n.+1 | p i) f i =0 (if p ord_max then f ord_max else prot0) ||| \||_(i < n | p (widen_ord (leqnSn n) i)) f (widen_ord (leqnSn n) i).
+  \||_(i < n.+1 | p i) f i ~= (if p ord_max then f ord_max else prot0) ||| \||_(i < n | p (widen_ord (leqnSn n) i)) f (widen_ord (leqnSn n) i).
   rewrite bigpar_mkcond.
   rewrite bigpar_ord_recr.
   simpl.
@@ -1109,7 +1109,7 @@ Lemma bigpar_ord_recr_cond {n} f p  :
 Qed.
 
 Lemma bigpar_ord_lt_Sr {n} j (h : j < n) f :
-  \||_(i < n | i < j.+1) f i =0 (\||_(i < n | i < j) f i) ||| f (Ordinal h).
+  \||_(i < n | i < j.+1) f i ~= (\||_(i < n | i < j) f i) ||| f (Ordinal h).
   rewrite big_ord_narrow //=.
   rewrite big_ord_narrow //=.
   ssr_lia; lia.
@@ -1134,7 +1134,7 @@ Qed.
 
 
 Lemma bigpar_ord_lt_Sl {n} k (h : k.+1 < n) f :
-  \||_(i < n | k < i) f i =0 f (Ordinal h) ||| \||_(i < n | k.+1 < i) f i.
+  \||_(i < n | k < i) f i ~= f (Ordinal h) ||| \||_(i < n | k.+1 < i) f i.
   rewrite bigpar_D1_ord.
   apply EqCong.
   reflexivity.
@@ -1165,13 +1165,13 @@ Qed.
 
 Lemma pars_big_hybrid {n} (f1 f2 : 'I_n -> rset) (rs : seq rset) :
   (forall (k : 'I_n),
-      pars [:: \||_(i < n | i < k) f2 i, f1 k, \||_(i < n | k < i) f1 i & rs] =0
+      pars [:: \||_(i < n | i < k) f2 i, f1 k, \||_(i < n | k < i) f1 i & rs] ~=
       pars [:: \||_(i < n | i < k) f2 i, f2 k, \||_(i < n | k < i) f1 i & rs]) -> 
-  pars [:: (\||_(i < n) f1 i) & rs] =0 pars [:: \||_(i < n) f2 i & rs].
+  pars [:: (\||_(i < n) f1 i) & rs] ~= pars [:: \||_(i < n) f2 i & rs].
   intros.
   have h:
     forall (k : 'I_n),
-      pars [:: \||_(i < n) f1 i & rs] =0
+      pars [:: \||_(i < n) f1 i & rs] ~=
       pars [:: \||_(i < n | i < k) f2 i,  f1 k, \||_(i < n | k < i) f1 i & rs].                                       
     intros.
     destruct k as [k Hk].
@@ -1236,15 +1236,15 @@ Qed.
 
 Lemma pars_big_hybrid2 {n} (f1 f2 : 'I_n -> rset) (rs : seq rset) :
   (forall (k : 'I_n),
-      pars [:: \||_(i < n | i < k) f1 i & rs] =0
+      pars [:: \||_(i < n | i < k) f1 i & rs] ~=
       pars [:: \||_(i < n | i < k) f2 i & rs]  ->
-      pars [:: \||_(i < n | i < k) f1 i, f1 k & rs] =0
+      pars [:: \||_(i < n | i < k) f1 i, f1 k & rs] ~=
       pars [:: \||_(i < n | i < k) f1 i, f2 k & rs]) ->
-  pars [:: (\||_(i < n) f1 i) & rs] =0 pars [:: \||_(i < n) f2 i & rs].
+  pars [:: (\||_(i < n) f1 i) & rs] ~= pars [:: \||_(i < n) f2 i & rs].
   intros.
   have h :
     forall (k : 'I_(n.+1)) ,
-      pars [:: \||_(i < n | i < k) f1 i & rs] =0
+      pars [:: \||_(i < n | i < k) f1 i & rs] ~=
       pars [:: \||_(i < n | i < k) f2 i & rs].
   intros.
   destruct k as [k Hk].
@@ -1267,7 +1267,7 @@ Lemma pars_big_hybrid2 {n} (f1 f2 : 'I_n -> rset) (rs : seq rset) :
   apply IHk.
   ssr_lia; lia.
 
-  have -> : \||_(i < n) f1 i =0 \||_(i < n | i < n) f1 i.
+  have -> : \||_(i < n) f1 i ~= \||_(i < n | i < n) f1 i.
       apply EqProt_big.
       move => x //= _; apply bool_iffP; split; rewrite /in_mem //=.
       done.
@@ -1280,7 +1280,7 @@ Lemma pars_big_hybrid2 {n} (f1 f2 : 'I_n -> rset) (rs : seq rset) :
 Qed.
 
 Lemma bigpar_new {n} {t} (f : 'I_n -> chan t -> rset) :
-  \||_(i < n) (x <- new t ;; f i x) =0 
+  \||_(i < n) (x <- new t ;; f i x) ~= 
   x <- newvec n @ t ;; \||_(i < n) (f i (tnth x i)).
   induction n.
   rewrite //= !big_ord0 //=.
@@ -1298,7 +1298,7 @@ Lemma bigpar_new {n} {t} (f : 'I_n -> chan t -> rset) :
   rewrite tnthS //=.
 Qed.
 
-Lemma bigpar_prot0 {n} : \||_(i < n) prot0 =0 prot0.
+Lemma bigpar_prot0 {n} : \||_(i < n) prot0 ~= prot0.
   induction n.
   rewrite big_ord0 //=.
   rewrite big_ord_recl.
@@ -1308,7 +1308,7 @@ Qed.
 
 
 Lemma big_pars2 n r1 r2 :
-  \||_(i < n) pars [:: r1 i; r2 i] =0 pars [:: \||_(i < n) r1 i; \||_(i < n) r2 i].
+  \||_(i < n) pars [:: r1 i; r2 i] ~= pars [:: \||_(i < n) r1 i; \||_(i < n) r2 i].
   rewrite !bigpar_par.
   rewrite bigpar_prot0 -eq_par0.
   rewrite !pars_cons //= -eq_par0.
@@ -1319,7 +1319,7 @@ Qed.
 
 Lemma big_remove_cond {I} {t} r (p : pred 'I_I) (P : rset) :
   (forall j x, p j -> In (rxn_inputs (r j)) x -> In P x) ->
-  (x <- newvec I @ t ;; \||_(j < I | p j) Out (tnth x j) (r j)) ||| P =0 P.
+  (x <- newvec I @ t ;; \||_(j < I | p j) Out (tnth x j) (r j)) ||| P ~= P.
   intros.
   induction I.
   rewrite //= big_ord0 -eq_0par //=.
@@ -1364,7 +1364,7 @@ Qed.
 
 Lemma pars_big_remove_cond {I} {t} (p : pred 'I_I)  r rs :
   (forall j x, p j -> In (rxn_inputs (r j)) x -> In (pars rs) x) ->
-  (x <- newvec I @ t ;; pars [:: \||_(j < I | p j) Out (tnth x j) (r j) & rs ]) =0 pars rs.
+  (x <- newvec I @ t ;; pars [:: \||_(j < I | p j) Out (tnth x j) (r j) & rs ]) ~= pars rs.
   intros.
   setoid_rewrite pars_cons.
   rewrite -newComp.

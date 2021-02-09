@@ -200,7 +200,7 @@ Notation "x <- 'new' t ;; P" := (New t (fun x => P)) (at level 41, right associa
 Notation prot0 := Zero.
 
 
-Infix "=0" := (EqProt) (at level 60).
+Infix "~=" := (EqProt) (at level 60).
 
 (* Basic lemmas *)
 
@@ -296,9 +296,9 @@ Definition copy {t} (c : chan t) : rxn t := (x <-- Read c ;; Ret x).
 
 Class NewLike {A} (f : (A -> rset) -> rset) :=
   {
-  newUnused : forall r, f (fun _ => r) =0 r;
-  newComp : forall k r, f k ||| r =0 f (fun c => k c ||| r);
-  newCong : forall k1 k2, (forall x, k1 x =0 k2 x) -> f k1 =0 f k2;
+  newUnused : forall r, f (fun _ => r) ~= r;
+  newComp : forall k r, f k ||| r ~= f (fun c => k c ||| r);
+  newCong : forall k1 k2, (forall x, k1 x ~= k2 x) -> f k1 ~= f k2;
                                                               }.
 Instance New_NewLike t : NewLike (New t).
    constructor.
@@ -310,7 +310,7 @@ Qed.
 
 Check NewComp_r.
 Lemma newComp_r {A} (f : (A -> rset) -> rset) `{NewLike _ f} k r :
-  r ||| f k =0 f (fun c => r ||| k c).
+  r ||| f k ~= f (fun c => r ||| k c).
   rewrite ParSym.
   rewrite newComp.
   apply newCong; intros.
@@ -319,7 +319,7 @@ Qed.
 
 
 Lemma eq_EqRefl r1 r2 :
-  r1 = r2 -> r1 =0 r2.
+  r1 = r2 -> r1 ~= r2.
   intro; subst; done.
 Qed.
 

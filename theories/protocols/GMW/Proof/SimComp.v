@@ -148,7 +148,7 @@ Lemma GMWIdeal_simE {A B n o} `{Inhabited 'I_A} `{Inhabited 'I_B} `{Inhabited 'I
            (R_leakInit_a2b : A.-tuple (chan TBool))
            (R_leakInit_b2a : B.-tuple (chan TBool))
            (R_leakFinal_b2a : o.-tuple (chan TBool)) :
-  GMWIdeal_Sim c outs inA inB outA outB R_leakOTBits R_leakAIn R_leakInit_a2b R_leakInit_b2a R_leakFinal_b2a =0
+  GMWIdeal_Sim c outs inA inB outA outB R_leakOTBits R_leakAIn R_leakInit_a2b R_leakInit_b2a R_leakFinal_b2a ~=
   GMWIdeal_sim_comp c outs inA inB outA outB R_leakOTBits R_leakAIn R_leakInit_a2b R_leakInit_b2a R_leakFinal_b2a. 
   intros.
   rewrite /GMWIdeal_Sim.

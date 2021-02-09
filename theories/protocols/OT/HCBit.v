@@ -124,7 +124,7 @@ Qed.
 
   Lemma withHCBitPairRealP f :
     (forall c_ek y b, EqProt (HCBitReal c_ek y b) (HCBitIdeal c_ek y b)) ->
-    withHCBitPairReal f =0 withHCBitPairIdeal f.
+    withHCBitPairReal f ~= withHCBitPairIdeal f.
     intros.
     repeat ltac:(apply EqNew; intros).
     rewrite pars_cons.

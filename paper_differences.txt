@@ -1,2 +1,1 @@
-1. In the paper, we mention the use of  ~=  to stand for EqProt. Currently, this notation is =0 in the repo. We plan on revising this soon.
 2. The core rules of IPDL make use of a somewhat generalized rule named Replacement, which we exchanged in the paper for transitivity and substitution. This will be also fixed to match the paper soon.

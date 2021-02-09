@@ -9,7 +9,7 @@ Open Scope bool_scope.
 
 Lemma new_pars_undep {t1 t2} (c2 : chan t2) (rs : chan t1 -> seq rset) r r' :
     Forall (In (rxn_inputs r')) (rxn_inputs r) ->
-  (c1 <- new t1 ;; pars [:: Out c2 (_ <-- Read c1 ;; r'), Out c1 r & rs c1]) =0
+  (c1 <- new t1 ;; pars [:: Out c2 (_ <-- Read c1 ;; r'), Out c1 r & rs c1]) ~=
   (c1 <- new t1 ;; pars [:: Out c2 (r'), Out c1 r & rs c1]) .
   intros.
   apply EqNew => c1 _ _ .
@@ -105,7 +105,7 @@ Section OTPre.
             OTIdeal _ base_i base_m base_o ].
 
   Lemma OTPre_eq :
-    OTPre =0
+    OTPre ~=
              (leako <- new L ;;
               pars [::
                       OTIdeal _ i m o;

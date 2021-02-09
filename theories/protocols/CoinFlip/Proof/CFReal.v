@@ -23,7 +23,7 @@ Definition CFRealParty_honest_external (k : nat) {n} (committed : (n.+1).-tuple 
 Lemma CFRealParty_honest_externalE (k : nat) {n} (committed : (n.+1).-tuple (chan TUnit)) (opened : (n.+1).-tuple (chan k)) (commit : chan k) (open : chan TUnit) (out : chan k) (opened_sum : (n.+1).-tuple (chan k)) :
   pars [::
           CFRealParty_honest k _ committed opened commit open out;
-          @cfold _ k k opened xort id opened_sum ] =0 
+          @cfold _ k k opened xort id opened_sum ] ~= 
   pars [::
           CFRealParty_honest_external k committed opened commit open ;
           Out out (copy (tnth opened_sum ord_max)); 
@@ -56,7 +56,7 @@ Qed.
 Lemma CFRealPartyE (k : nat) {n} (honest : pred 'I_(n.+1)) advCommit advOpen advCommitted advOpened i committed opened commit open out opened_sum :
   pars [::
           CFParty k _ honest advCommit advOpen advCommitted advOpened i committed opened commit open out;
-          @cfold _ k k opened xort id opened_sum ] =0 
+          @cfold _ k k opened xort id opened_sum ] ~= 
   pars [::
           if honest i then pars [::
                                    CFRealParty_honest_external k committed opened commit open; Out out (copy (tnth opened_sum ord_max))] else CFRealParty_corr k _ advCommit advOpen advCommitted advOpened i committed opened commit open;
@@ -71,7 +71,7 @@ Qed.
 Lemma CFRealParty_compE (k : nat) {n} (honest : pred 'I_(n.+1)) advCommit advOpen advCommitted advOpened committed opened commit open out opened_sum :
   pars [::
          \||_(i < n.+1) CFParty k _ honest advCommit advOpen advCommitted advOpened i committed opened (tnth commit i) (tnth open i) (tnth out i) ; 
-          @cfold _ k k opened xort id opened_sum ] =0 
+          @cfold _ k k opened xort id opened_sum ] ~= 
   pars [::
           \||_(i < n.+1 | honest i) CFRealParty_honest_external k committed opened (tnth commit i) (tnth open i);
           \||_(i < n.+1 | honest i) Out (tnth out i) (copy (tnth opened_sum ord_max));
@@ -111,7 +111,7 @@ Lemma opened_sumE (k : nat) {n} (commits : (n.+1).-tuple (chan k)) (opens : (n.+
           @cfold _ k k commits xort id commits_sum;
           read_all opens opens_sum;
           @cfold _ k k opened xort id opened_sum;
-          \||_(i < n.+1) FComm k (tnth commits i)  (tnth committed i) (tnth opens i) (tnth opened i)]  =0
+          \||_(i < n.+1) FComm k (tnth commits i)  (tnth committed i) (tnth opens i) (tnth opened i)]  ~=
 
   pars [::
           @cfold _ k k commits xort id commits_sum;
@@ -246,7 +246,7 @@ Lemma CFRealSimplE (k : nat) {n}
            (advOpen : (n.+1).-tuple (chan TUnit))
            (advCommitted : (n.+1).-tuple ((n.+1).-tuple (chan TUnit)))
            (advOpened : (n.+1).-tuple ((n.+1).-tuple (chan k))) :
-  CFReal k _ honest out advCommit advOpen advCommitted advOpened =0
+  CFReal k _ honest out advCommit advOpen advCommitted advOpened ~=
   CFRealSimpl k honest out advCommit advOpen advCommitted advOpened.
   rewrite /CFReal.
   etransitivity.

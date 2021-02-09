@@ -22,7 +22,7 @@ Lemma pars_inline_from_big_shift_index {t t'} {n1 n2} (b : chan t') (f : 'I_n1 -
   p i ->
   pars [::
           Out b (x <-- Read (tnth c (f i)) ;; k x),
-          \||_(j < n1 | p j) Out (tnth c (f j)) (r j) & rs] =0
+          \||_(j < n1 | p j) Out (tnth c (f j)) (r j) & rs] ~=
   pars [::
           Out b (x <-- r i ;; k x),
           \||_(j < n1 | p j) Out (tnth c (f j)) (r j) & rs]. 
@@ -69,7 +69,7 @@ Qed.
           read_all committed sum_committed;
           Out c (_ <-- Read (tnth sum_committed ord_max) ;;
                  _ <-- Read (tnth sum_commits i) ;; r)]
-     =0     
+     ~=     
      pars [::
              \||_(i < n.+1) Out (tnth committed (widen_ordS i)) (_ <-- Read (tnth commit i) ;; Ret vtt);
              Out (tnth committed ord_max) (Ret vtt);
@@ -157,13 +157,13 @@ Ltac print_rhs_size :=
     let j := eval simpl in (size rs) in idtac j end.
 
 Lemma pars_replace r2 r1 rs :
-  pars [:: r1 & rs] =0 pars [:: r2 & rs] ->
-  pars [:: r1 & rs] =0 pars [:: r2 & rs].
+  pars [:: r1 & rs] ~= pars [:: r2 & rs] ->
+  pars [:: r1 & rs] ~= pars [:: r2 & rs].
   done.
 Qed.
 
 Lemma big_ord_not_maxE {n} (f : 'I_(n.+1) -> rset) :
-  \||_(i < n.+1 | i != ord_max) (f i) =0 \||_(i < n) (f (widen_ordS i)).
+  \||_(i < n.+1 | i != ord_max) (f i) ~= \||_(i < n) (f (widen_ordS i)).
   rewrite bigpar_mkcond.
   rewrite bigpar_ord_recr.
   rewrite eq_refl //= -eq_0par.
@@ -352,7 +352,7 @@ Section SimComp.
             \||_(i < n | i != ord_max) Sim_CFParty k honest advCommit advOpen advCommitted advOpened i committed opened (tnth commit i) (tnth open i) ] ).
              
 
-  Lemma SimComp_E1 out : SimComp out =0 SimComp_simpl1 out.
+  Lemma SimComp_E1 out : SimComp out ~= SimComp_simpl1 out.
     rewrite /SimComp /SimComp_simpl1.
     apply EqNew => leak _ _.
     apply EqNew => ok _ _.
@@ -479,7 +479,7 @@ Section SimComp.
              
 
   Lemma SimComp_simpl2E out :
-    SimComp_simpl1 out =0 SimComp_simpl2 out.
+    SimComp_simpl1 out ~= SimComp_simpl2 out.
 
     apply EqNew => leak _ _.
     apply EqNew => ok _ _.
@@ -645,7 +645,7 @@ Section SimComp.
       \||_(i < n | i != ord_max) Sim_CFParty k honest advCommit advOpen advCommitted advOpened i committed opened (tnth commit i) (tnth open i) ] ].
 
   Lemma SimComp_simpl3E out :
-    SimComp_simpl2 out =0 SimComp_simpl3 out.
+    SimComp_simpl2 out ~= SimComp_simpl3 out.
     rewrite /SimComp_simpl2.
 
 
@@ -745,7 +745,7 @@ Section SimComp.
       \||_(i < n | i != ord_max) Sim_CFParty k honest advCommit advOpen advCommitted advOpened i committed opened (tnth commit i) (tnth open i) ] ].
 
   Lemma SimComp_simpl4E out :
-    SimComp_simpl3 out =0 SimComp_simpl4 out.
+    SimComp_simpl3 out ~= SimComp_simpl4 out.
     apply EqNew_vec => commit _ _.
     apply EqNew_vec => open _ _.
     apply EqNew_vec => committed _ _.
@@ -813,7 +813,7 @@ Qed.
       \||_(i < n_.+1) Sim_CFParty k honest advCommit advOpen advCommitted advOpened (widen_ordS i) committed opened (tnth commit i) (tnth open (widen_ordS i)) ] ].
 
   Lemma SimComp_simpl5E out :
-    SimComp_simpl4 out =0 SimComp_simpl5 out.
+    SimComp_simpl4 out ~= SimComp_simpl5 out.
     rewrite /SimComp_simpl4.
     rewrite /SimComp_simpl5.
     etransitivity.
@@ -1010,7 +1010,7 @@ Qed.
       \||_(i < n | i != ord_max) Sim_CFParty k honest advCommit advOpen advCommitted advOpened i committed opened (tnth commit i) (tnth open i) ] ].
 
 Lemma SimComp_simpl6E out :
-    SimComp_simpl5 out =0 SimComp_simpl6 out.
+    SimComp_simpl5 out ~= SimComp_simpl6 out.
   rewrite /SimComp_simpl5.
   rewrite /SimComp_simpl6.
   symmetry.
@@ -1104,7 +1104,7 @@ Qed.
       \||_(i < n) Sim_CFParty k honest advCommit advOpen advCommitted advOpened i committed opened (tnth commit i) (tnth open i) ] ].
 
   Lemma SimComp_simpl7E out :
-    SimComp_simpl6 out =0 SimComp_simpl7 out.
+    SimComp_simpl6 out ~= SimComp_simpl7 out.
     rewrite /SimComp_simpl6.
     rewrite /SimComp_simpl7.
     apply EqNew_vec => open _ _.

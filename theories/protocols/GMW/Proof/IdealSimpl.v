@@ -19,7 +19,7 @@ Lemma F_new_copy_tup_in {A B n : nat}
           evalCirc a2f b2f c wires;
           copy_tup inA a2f;
        copy_tup inB b2f]
-  =0
+  ~=
   pars [::
           evalCirc inA inB c wires;
           copy_tup inA a2f;
@@ -62,7 +62,7 @@ Lemma GMWIdealE {A B n O : nat} `{Inhabited 'I_O} `{Inhabited 'I_A} `{Inhabited 
            (outs : circOuts n O) :
   tup_disj inB b2advI_timing ->
   tup_disj inA a2advI ->
-  GMWIdeal inA inB outA outB a2advI a2advO b2advI_timing c outs =0
+  GMWIdeal inA inB outA outB a2advI a2advO b2advI_timing c outs ~=
   GMWIdealSimpl inA inB outA outB a2advI a2advO b2advI_timing c outs.
   intros.
   rewrite /GMWIdeal.
