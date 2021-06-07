@@ -2,7 +2,7 @@
 Require Import List.
 From mathcomp Require Import ssreflect ssrbool ssrnat eqtype seq tuple ssrfun.
 From mathcomp Require Import choice path bigop fintype.
-Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Ipdl.Tacs Lib.Dist Ipdl.Big Pars Typ Lib.Set Lib.SeqOps Permutation.  
+Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Ipdl.Tacs Lib.Dist Ipdl.Big Pars Lib.Set Lib.SeqOps Permutation.  
 
 (* TODO: - simplify group interface
          - separate into different modules *)
