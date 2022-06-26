@@ -1,0 +1,17 @@
+*.glob
+*.vo
+*.aux
+*.vok
+*.vos
+*.*~
+*~
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.pdf
+*.bbl
+*.blg
+*#*#
+**/*.lia.cache
+**/*.DS_Store
