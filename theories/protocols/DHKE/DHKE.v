@@ -16,21 +16,22 @@ Module Type DHKEParams.
   Parameter (gmulA : forall x y z, gmul (gmul x y) z = gmul x (gmul y z)).
   Parameter (gmulC : forall x y, gmul x y = gmul y x).
   Parameter (ident : group).
+  Parameter (ggen : group).
   Parameter (gmulK : forall x, gmul x (ginv x) = ident).
   Parameter (gmul1 : forall x, gmul x ident = x).
 
   Parameter (glog : group -> sk).
   Parameter (gexp : group -> sk -> group).
-  Parameter (glogK : forall x, glog (gexp ident x) = x).
+  Parameter (glogK : forall x, glog (gexp ggen x) = x).
   Parameter (sk_mul : sk -> sk -> sk).
   Parameter (gexp_gexp : forall x y g, gexp (gexp g x) y = gexp g (sk_mul x y)).
   Parameter (sk_mulC : forall x y, sk_mul x y = sk_mul y x).
   Parameter (gen_sk : Dist sk).
 
-  Parameter (gexpK : forall x, gexp ident (glog x) = x).
+  Parameter (gexpK : forall x, gexp ggen (glog x) = x).
   Parameter (gmul_inj : forall g, injective (fun x => gmul x g)).
 
-  Definition unif_group := dbind gen_sk (fun x => DRet (gexp ident x)).
+  Definition unif_group := dbind gen_sk (fun x => DRet (gexp ggen x)).
   Parameter (Hunif : uniform unif_group).
 End DHKEParams.
 
@@ -49,7 +50,7 @@ Definition DDH0 (out : chan (group * group * group)) : ipdl :=
           y ::= Samp gen_sk;
           out ::=
           (x <-- Read x;; y <-- Read y ;;
-           Ret ( gexp ident x, gexp ident y, gexp (gexp ident x) y))].
+           Ret ( gexp ggen x, gexp ggen y, gexp (gexp ggen x) y))].
 
 Definition DDH1 (out : chan (group * group * group)) : ipdl :=
   x <- new sk ;;
@@ -61,7 +62,7 @@ Definition DDH1 (out : chan (group * group * group)) : ipdl :=
           z ::= Samp gen_sk;
           out ::=
           (x <-- Read x;; y <-- Read y ;; z <-- Read z ;;
-           Ret ( gexp ident x, gexp ident y, gexp ident z))].
+           Ret ( gexp ggen x, gexp ggen y, gexp ggen z))].
           
 Definition FAuth {t} (cin cout : chan t) (leak : chan t) (ok : chan unit) :=
   pars [::
@@ -73,7 +74,7 @@ Definition DHKE_RealParty (send recv out : chan group) :=
   x <- new sk ;;
   pars [::
           x ::= Samp gen_sk;
-          send ::= (x <-- Read x ;; Ret (gexp ident x));
+          send ::= (x <-- Read x ;; Ret (gexp ggen x));
           out ::=  (x <-- Read x ;; h <-- Read recv ;; Ret (gexp h x)) ].
 
 (* 
@@ -105,16 +106,16 @@ Definition DHKEIdeal (okA okB : chan unit) (outA outB : chan group) :=
   x <- new sk ;; 
   pars [::
           x ::= Samp gen_sk;
-          outA ::= (_ <-- Read okA ;; x <-- Read x ;; Ret (gexp ident x));
-          outB ::= (_ <-- Read okB ;; x <-- Read x ;; Ret (gexp ident x))
+          outA ::= (_ <-- Read okA ;; x <-- Read x ;; Ret (gexp ggen x));
+          outB ::= (_ <-- Read okB ;; x <-- Read x ;; Ret (gexp ggen x))
                                                      ].
 
 Definition DHKESim (ok1 ok2 okA okB : chan unit) (leak1 leak2 : chan group) :=
   pars [::
           okA ::= copy ok2;
           okB ::= copy ok1;
-          leak1 ::= (x <-- Samp gen_sk;; Ret (gexp ident x));
-          leak2 ::= (x <-- Samp gen_sk;; Ret (gexp ident x))
+          leak1 ::= (x <-- Samp gen_sk;; Ret (gexp ggen x));
+          leak2 ::= (x <-- Samp gen_sk;; Ret (gexp ggen x))
                    ].
 
 Definition DHKESimIdeal (outA outB leak1 leak2 : chan group) (ok1 ok2 : chan unit) :=

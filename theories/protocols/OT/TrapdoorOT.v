@@ -541,10 +541,10 @@ Lemma OT_trapdoor_OTSimE :
 Qed.
 
 
-  Lemma OT_Trapdoor_Security e : 
+  Lemma OT_Trapdoor_Security k l : 
   (forall c1 c2 c3, 
-    @HCBitReal chan c1 c2 c3 =a_(e) HCBitIdeal c1 c2 c3) ->
-    OT_trapdoor =a_(comp_err (e +e comp_err e 3) 5) (leakO <- new bool ;; pars [:: OTIdeal _ i m o; OT_trapdoor_OTSim leakO; OTIdeal _ i m leakO] ).
+    @HCBitReal chan c1 c2 c3 =a_((k, l)) HCBitIdeal c1 c2 c3) ->
+    OT_trapdoor =a_((2 * k, l + 8)) (leakO <- new bool ;; pars [:: OTIdeal _ i m o; OT_trapdoor_OTSim leakO; OTIdeal _ i m leakO] ).
     intro.
     rewrite OT_trapdoor_simpE.
     rewrite /OT_trapdoor_simp.
@@ -562,7 +562,13 @@ Qed.
     apply _.
     intros; apply H.
     rewrite comp_err_comp.
-    done.
+    rewrite /comp_err //=.
+    have -> : maxn l (l+3) = (l+3).
+    apply/ maxn_idPr; apply leq_addr.
+    rewrite addnn -mul2n.
+    congr (_, _).
+    rewrite -!addnA.
+    congr (_ + _).
    Qed.
 
   Require Import Permutation Typ Lib.SeqOps.

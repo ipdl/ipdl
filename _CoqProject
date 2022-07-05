@@ -20,6 +20,9 @@ theories/Tacs.v
 theories/Sim.v
 theories/Encodable.v
 
+theories/protocols/DHKE/DHKE.v
+theories/protocols/DHKE/OTP_KE.v
+
 
 theories/protocols/Chan/CPA.v
 theories/protocols/Chan/MultiChan.v
@@ -31,8 +34,6 @@ theories/protocols/OT/TrapdoorOT.v
 theories/protocols/OT/OutOf4.v
 
 
-theories/protocols/DHKE/DHKE.v
-theories/protocols/DHKE/OTP_KE.v
 
 theories/protocols/OTP/PRF.v
 theories/protocols/Branch/branch.v

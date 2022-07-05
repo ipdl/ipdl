@@ -193,7 +193,7 @@ Instance inhab_sk : Inhabited sk := Hsk.
     apply EqBind_r => i.
     apply EqBind_r => okr.
     rewrite -gmulA.
-    rewrite (gmulC _ (gexp ident k)).
+    rewrite (gmulC _ (gexp ggen k)).
     rewrite gmulK gmulC gmul1.
     apply EqRxnRefl.
     swap_tac 0 1.
