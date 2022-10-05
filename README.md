@@ -61,4 +61,4 @@ Proof developments for case studies studies can be found in the following files:
 
 We borrow `lib/Crush.v` from [CPDT](http://adam.chlipala.net/cpdt/).
 We also borrow `lib/setoid_bigop.v` from the corresponding [Coq community
-respository](https://github.com/coq-community/graph-theory/blob/master/theories/setoid_bigop).
+respository](https://github.com/coq-community/graph-theory/blob/master/theories/setoid_bigop.v).

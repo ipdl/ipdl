@@ -10,7 +10,8 @@ Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Lib.Di
 Require Import FunctionalExtensionality.
 
 
-(* Because we use a shallow embedding, we punt on trying to bound anything except the number of reactions in protocols. It is currently up to the user to ensure that reactions are efficiently computable. *)
+(* Because we use a shallow embedding, we only keep track of the number of reactinos in protocols. It is currently up to the user to ensure that reactions are 
+efficiently computable. *)
 
 Fixpoint size_ipdl {chan} (p : @ipdl chan) (bnd : nat) : Prop :=
   match p with
@@ -72,15 +73,19 @@ Qed.
 
 
 
-
+(* Pairs (k, l), as in fig 14 *)
 Definition err := (nat * nat)%type.
 Definition err0 : err := (0, 0).
 
+Definition err1 : err := (1, 0).
+
+(* The error accumluated by transitivity *)
 Definition add_err (e1 e2 : err) : err
       := (fst e1 + fst e2, maxn (snd e1) (snd e2)).
 
 Notation "e1 +e e2" := (add_err e1 e2) (at level 50) : ipdl_scope.
 
+(* The error accumulated by parallel composition *)
 Definition comp_err (e : err) (bnd : nat) : err :=
   (fst e, snd e + bnd).
 
@@ -93,31 +98,27 @@ Definition comp_err_comp (e : err) b1 b2 :
   rewrite /comp_err //= addnA //=.
 Qed.
 
-(* Similarly to the exact equational reasoning, 
-  the below abstract type allows us to lift arbitrary
-  semantic approximate equivalences into our equational reasoning, and is necessary for soundness. *)
-Axiom AEqProt_base : forall chan, err -> @ipdl chan -> @ipdl chan -> Prop.
+(* The below abstract type models our use of IPDL axioms for approximate equivalence. *)
+Axiom AEqProt_base : forall chan, (nat -> @ipdl chan) -> (nat -> @ipdl chan) -> Prop.
 
-Reserved Notation "p =a_( e ) q" (at level 40, format "p  =a_( e )  q").
-Inductive AEqProt {chan} : err -> @ipdl chan -> @ipdl chan -> Prop :=
-| AEq_base e p q : AEqProt_base chan e p q -> AEqProt e p q
-| AEq_zero : forall p1 p2 : ipdl, p1 =p p2 -> p1 =a_(err0) p2
+Reserved Notation "p =a_( l , e ) q" (at level 40, format "p  =a_( l , e )  q").
+Inductive AEqProt {chan} (lambda : nat) : err -> @ipdl chan -> @ipdl chan -> Prop :=
+| AEq_base p q : AEqProt_base chan p q -> AEqProt lambda err1 (p lambda) (q lambda)
+| AEq_zero : forall p1 p2 : ipdl, p1 =p p2 -> p1 =a_(lambda, err0) p2
 
 | AEq_tr : forall (e1 e2 e3 : err) (p1 p2 p3 : ipdl),
-            p1 =a_(e1) p2 -> p2 =a_(e2) p3 -> e3 = add_err e1 e2 -> p1 =a_(e3) p3
-| AEq_sym e p q : p =a_(e) q -> q =a_(e) p
+            p1 =a_(lambda, e1) p2 -> p2 =a_(lambda, e2) p3 -> e3 = add_err e1 e2 -> p1 =a_(lambda, e3) p3
+| AEq_sym e p q : p =a_(lambda, e) q -> q =a_(lambda, e) p
 | AEq_comp : forall (e : err) (p1 p2 q : ipdl) bnd,
-            p1 =a_(e) p2 -> size_ipdl q bnd -> (p1 ||| q) =a_(comp_err e bnd) (p2 ||| q)
+            p1 =a_(lambda, e) p2 -> size_ipdl q bnd -> (p1 ||| q) =a_(lambda, comp_err e bnd) (p2 ||| q)
 | AEq_new t f1 f2 e :
-    (forall c, (f1 c) =a_(e) (f2 c)) ->
-    (x <- new t ;; f1 x) =a_(e) (x <- new t ;; f2 x)
-where "p =a_( e ) q" := (AEqProt e p q) : ipdl_scope.
+    (forall c, (f1 c) =a_(lambda, e) (f2 c)) ->
+    (x <- new t ;; f1 x) =a_(lambda, e) (x <- new t ;; f2 x)
+where "p =a_( l , e ) q" := (AEqProt l e p q) : ipdl_scope.
 
-Check newvec.
-
-Lemma AEq_newvec {chan} {n} t (k1 k2 : n.-tuple (chan t) -> @ipdl chan) e :
-  (forall v, k1 v =a_(e) k2 v) ->
-  newvec n t k1 =a_(e) (newvec n t k2).
+Lemma AEq_newvec {chan} {n} {l} t (k1 k2 : n.-tuple (chan t) -> @ipdl chan) e :
+  (forall v, k1 v =a_(l, e) k2 v) ->
+  newvec n t k1 =a_(l, e) (newvec n t k2).
   intros.
   induction n.
   simpl.
@@ -130,12 +131,12 @@ Qed.
 
 Require Import RelationClasses.
 
-Instance refl_aeq {chan} : Reflexive (@AEqProt chan err0).
+Instance refl_aeq {chan} {l} : Reflexive (@AEqProt chan l err0).
    intro.
    apply AEq_zero; done.
 Qed.
 
-Instance sym_aeq {chan} e : Symmetric (@AEqProt chan e).
+Instance sym_aeq {chan}  {l} e : Symmetric (@AEqProt chan l e).
    intros x y.
    move/AEq_sym; done.
 Qed.
@@ -144,7 +145,7 @@ Require Import Setoid Relation_Definitions Morphisms.
 Close Scope bool_scope.
 
 (* This allows me to rewrite using exact equalities *)
-Instance proper_aeqprot {chan} : Proper (eq ==> EqProt ==> EqProt ==> Basics.flip Basics.impl) (@AEqProt chan).
+Instance proper_aeqprot {chan} {l} : Proper (eq ==> EqProt ==> EqProt ==> Basics.flip Basics.impl) (@AEqProt chan l).
     repeat intro. 
     eapply AEq_tr.
     apply AEq_zero; apply H0.
@@ -159,23 +160,23 @@ Instance proper_aeqprot {chan} : Proper (eq ==> EqProt ==> EqProt ==> Basics.fli
 Qed.
 
 (* The below class is used to automate manipulations involving approximate equivalences. *)
-Class RewritesWith {chan} (x : @ipdl chan) y e (h : x =a_(e) y) (p : @ipdl chan) q e' := rewr_witness : (p =a_(e') q).
+Class RewritesWith {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e) y) (p : @ipdl chan) q e' := rewr_witness : (p =a_(l, e') q).
 
-Lemma rewrite_RewritesWith {chan} {x y} {e e'} (h : x =a_(e) y) p q `{RewritesWith chan _ _ e h p q e'} : p =a_(e') q.
+Lemma rewrite_RewritesWith {chan} {l} {x y} {e e'} (h : x =a_(l, e) y) p q `{RewritesWith chan l _ _ e h p q e'} : p =a_(l, e') q.
     apply rewr_witness.
 Qed.
 
-Instance RewritesWith_id {chan} (x : @ipdl chan) y e (h : x =a_(e) y) : RewritesWith x y e h x y e.
+Instance RewritesWith_id {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e) y) : RewritesWith x y e h x y e.
     apply h.
 Qed.
 
-Instance RewritesWith_comp_l {chan} (x : @ipdl chan) y e (h : x =a_(e) y) (p : ipdl) bnd `{IPDLBnd _ p bnd} : RewritesWith x y e h (x ||| p) (y ||| p) (comp_err e bnd).
+Instance RewritesWith_comp_l {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e) y) (p : ipdl) bnd `{IPDLBnd _ p bnd} : RewritesWith x y e h (x ||| p) (y ||| p) (comp_err e bnd).
     apply AEq_comp.
     apply h.
     destruct H; done.
 Qed.
 
-Instance RewritesWith_comp_r {chan} (x : @ipdl chan) y e (h : x =a_(e) y) p bnd `{IPDLBnd _ p bnd} : RewritesWith x y e h (p ||| x) (p ||| y) (comp_err e bnd).
+Instance RewritesWith_comp_r {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e) y) p bnd `{IPDLBnd _ p bnd} : RewritesWith x y e h (p ||| x) (p ||| y) (comp_err e bnd).
     rewrite /RewritesWith.
     rewrite EqCompComm.
     rewrite (EqCompComm p).
@@ -184,7 +185,7 @@ Instance RewritesWith_comp_r {chan} (x : @ipdl chan) y e (h : x =a_(e) y) p bnd 
     destruct H; done.
 Qed.
 
-Instance RewritesWith_pars_head {chan} (x : @ipdl chan) y e (h : x =a_(e) y) ps bnd `{IPDLBnd _ (pars ps) bnd} :
+Instance RewritesWith_pars_head {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e) y) ps bnd `{IPDLBnd _ (pars ps) bnd} :
   RewritesWith x y e h (pars (x :: ps)) (pars (y :: ps)) (comp_err e bnd).
    rewrite /RewritesWith.
    rewrite !pars_cons.
@@ -193,7 +194,7 @@ Instance RewritesWith_pars_head {chan} (x : @ipdl chan) y e (h : x =a_(e) y) ps 
    done.
 Qed.
 
-Instance RewritesWith_pars_cons {chan} (x : @ipdl chan) y e (h : x =a_(e) y) ps qs p e' `{RewritesWith chan x y e h (pars ps) (pars qs) e'} bnd `{IPDLBnd _ p bnd} :
+Instance RewritesWith_pars_cons {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e) y) ps qs p e' `{RewritesWith chan l x y e h (pars ps) (pars qs) e'} bnd `{IPDLBnd _ p bnd} :
    RewritesWith x y e h (pars (p :: ps)) (pars (p :: qs)) (comp_err e' bnd).
    rewrite /RewritesWith.
    rewrite !pars_cons.
@@ -207,10 +208,10 @@ Ltac arewrite h :=
 
 
 Ltac arewrite_inv h :=
-   eapply AEq_tr; [ eapply (rewrite_RewritesWith (AEq_sym _ _ _ h)); apply _ | | ].
+   eapply AEq_tr; [ eapply (rewrite_RewritesWith (AEq_sym _ _ _ _ h)); apply _ | | ].
 
 
-Lemma exact_tr {chan} (p : @ipdl chan) p' q e : p' =p p -> p =a_(e) q -> p' =a_(e) q.
+Lemma exact_tr {chan} {l} (p : @ipdl chan) p' q e : p' =p p -> p =a_(l, e) q -> p' =a_(l, e) q.
   intros.
   rewrite H.
   done.
@@ -220,17 +221,17 @@ Qed.
 Ltac atrans := eapply AEq_tr.
 Ltac etrans := eapply exact_tr.
 
-Lemma AEq_comp_r {chan} (e : err) (p1 : @ipdl chan) p2 q bnd `{IPDLBnd _ q bnd} :
-  p1 =a_(e) p2 -> (q ||| p1) =a_(comp_err e bnd) (q ||| p2).
+Lemma AEq_comp_r {chan} {l} (e : err) (p1 : @ipdl chan) p2 q bnd `{IPDLBnd _ q bnd} :
+  p1 =a_(l, e) p2 -> (q ||| p1) =a_(l, comp_err e bnd) (q ||| p2).
   intros.
   arewrite H0.
   reflexivity.
   rewrite /add_err /err0 //= addn0 maxn0 //=.
 Qed.
 
-Lemma AEq_err_eq {chan} e1 e2 (p1 p2 : @ipdl chan) :
+Lemma AEq_err_eq {chan} {l} e1 e2 (p1 p2 : @ipdl chan) :
   e1 = e2 ->
-  p1 =a_(e1) p2 ->
-  p1 =a_(e2) p2.
+  p1 =a_(l, e1) p2 ->
+  p1 =a_(l, e2) p2.
   intro; subst; done.
 Qed.

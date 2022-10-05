@@ -216,10 +216,10 @@ Lemma branch_eq {chan : Type -> Type} {t t'} (b : chan bool)
       `{forall x y, IPDLBnd (P' x y) bnd3}
       `{forall x y, IPDLBnd (Q x y) bnd2}
       `{forall x y, IPDLBnd (Q' x y) bnd4}
-      i o e e' :
-  (forall i o, P i o =a_(e) P' i o) ->
-  (forall i o, Q i o =a_(e') Q' i o) ->
-  branch b P Q i o =a_(
+      l i o e e' :
+  (forall i o, P i o =a_(l, e) P' i o) ->
+  (forall i o, Q i o =a_(l, e') Q' i o) ->
+  branch b P Q i o =a_(l, 
   comp_err e (bnd2 + 4) +e comp_err e' (bnd3 + 4)) branch b P' Q' i o.
   intros; rewrite /branch.
   eapply AEq_err_eq; last first.

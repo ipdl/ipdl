@@ -7,7 +7,7 @@ Require Import Sim Typ Lib.Perm Lib.SeqOps Permutation.
 
 
 (* We axiomitize groups in a manner useful for the proof *)
-Module Type DHKEParams.
+Module Type DDH.
 
   Parameter (group sk : finType) (Hgroup : Inhabited group) (Hsk:  Inhabited sk).
 
@@ -33,16 +33,14 @@ Module Type DHKEParams.
 
   Definition unif_group := dbind gen_sk (fun x => DRet (gexp ggen x)).
   Parameter (Hunif : uniform unif_group).
-End DHKEParams.
 
-
-Module KeyExchange (Import P : DHKEParams).
-
-Section DHKE.
-Context {chan : Type -> Type}.
+  (* The security parameter for DHKE is inheritied from that of the group.
+     When we import DHKEParams, we get a securty parameter lambda,
+     and correspondingly assume that DDH is hard for that lambda. *)
+  Parameter (lambda : nat).
 
 (* The DDH assumption *)
-Definition DDH0 (out : chan (group * group * group)) : ipdl :=
+Definition DDH0 {chan} (out : chan (group * group * group)%type) : ipdl :=
   x <- new sk ;;
   y <- new sk ;;
   pars [::
@@ -52,7 +50,7 @@ Definition DDH0 (out : chan (group * group * group)) : ipdl :=
           (x <-- Read x;; y <-- Read y ;;
            Ret ( gexp ggen x, gexp ggen y, gexp (gexp ggen x) y))].
 
-Definition DDH1 (out : chan (group * group * group)) : ipdl :=
+Definition DDH1 {chan} (out : chan (group * group * group)%type) : ipdl :=
   x <- new sk ;;
   y <- new sk ;;
   z <- new sk ;;
@@ -63,6 +61,17 @@ Definition DDH1 (out : chan (group * group * group)) : ipdl :=
           out ::=
           (x <-- Read x;; y <-- Read y ;; z <-- Read z ;;
            Ret ( gexp ggen x, gexp ggen y, gexp ggen z))].
+
+  Parameter (DDH_security : forall {chan} (ddh_samp : chan _), DDH0 ddh_samp =a_(lambda, err1) DDH1 ddh_samp).
+
+End DDH.
+
+
+Module KeyExchange (Import P : DDH).
+
+Section DHKE.
+Context {chan : Type -> Type}.
+
           
 Definition FAuth {t} (cin cout : chan t) (leak : chan t) (ok : chan unit) :=
   pars [::
@@ -341,16 +350,15 @@ Qed.
 
 
 
-Lemma DHKE_security (outA outB leak1 leak2 : chan group) (ok1 ok2 : chan unit) e :
-  (forall ddh_samp, DDH0 ddh_samp =a_(e) DDH1 ddh_samp) -> 
-  DHKEReal outA outB leak1 leak2 ok1 ok2 =a_(comp_err e 4)
+Lemma DHKE_security (outA outB leak1 leak2 : chan group) (ok1 ok2 : chan unit) :
+  DHKEReal outA outB leak1 leak2 ok1 ok2 =a_(lambda, comp_err err1 4)
   DHKESimIdeal outA outB leak1 leak2 ok1 ok2.
   intros.
   rewrite DHKE1.
   rewrite -DHKE2.
   rewrite /DHKERealHybrid.
   apply AEq_new => ddh_samp.
-  arewrite (H ddh_samp).
+  arewrite (@DDH_security chan ddh_samp) .
   done.
   rewrite add_err0 //=.
 Qed.

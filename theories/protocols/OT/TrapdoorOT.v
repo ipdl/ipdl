@@ -8,9 +8,9 @@ Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Ipdl.T
 Require Import HCBit OTIdeal Ipdl.Approx.
 
 Open Scope bool_scope. 
-Module TrapdoorOT (P : HCParams).
-  Module HCBit := HCBit(P).
-  Import HCBit.
+Module TrapdoorOT (P : HCBit).
+  Module HCBitPair := HCBitPair(P).
+  Import HCBitPair.
   
 
   Section TrapdoorOT.
@@ -541,11 +541,8 @@ Lemma OT_trapdoor_OTSimE :
 Qed.
 
 
-  Lemma OT_Trapdoor_Security k l : 
-  (forall c1 c2 c3, 
-    @HCBitReal chan c1 c2 c3 =a_((k, l)) HCBitIdeal c1 c2 c3) ->
-    OT_trapdoor =a_((2 * k, l + 8)) (leakO <- new bool ;; pars [:: OTIdeal _ i m o; OT_trapdoor_OTSim leakO; OTIdeal _ i m leakO] ).
-    intro.
+  Lemma OT_Trapdoor_Security :
+    OT_trapdoor =a_(lambda, (2, 8)) (leakO <- new bool ;; pars [:: OTIdeal _ i m o; OT_trapdoor_OTSim leakO; OTIdeal _ i m leakO] ).
     rewrite OT_trapdoor_simpE.
     rewrite /OT_trapdoor_simp.
     symmetry.
@@ -560,16 +557,8 @@ Qed.
     symmetry.
     apply withHCBitPairRealP.
     apply _.
-    intros; apply H.
-    rewrite comp_err_comp.
     rewrite /comp_err //=.
-    have -> : maxn l (l+3) = (l+3).
-    apply/ maxn_idPr; apply leq_addr.
-    rewrite addnn -mul2n.
-    congr (_, _).
-    rewrite -!addnA.
-    congr (_ + _).
-   Qed.
+  Qed.
 
   Require Import Permutation Typ Lib.SeqOps.
 

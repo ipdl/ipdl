@@ -6,7 +6,7 @@ From mathcomp Require Import choice path bigop fintype.
 Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Ipdl.Tacs Lib.Dist Lib.Base Lib.SeqOps Pars Ipdl.Approx.
 
 Require Import Typ Lib.SeqOps.
-Module Type HCParams.
+Module Type HCBit.
 
   (* We assume the trapdoor permutation is given by:
    - a length, D, of its domain;
@@ -21,12 +21,7 @@ Module Type HCParams.
              (evalInv : tk.-bv -> D.-bv -> D.-bv) 
              (eval_cancel : forall tk, cancel (eval (evalKey tk)) (evalInv tk))
              (B : D.-bv -> bool).
-End HCParams.
 
-Module HCBit (P : HCParams).
-  Export P.
-  
-  
   (* The real experiment for HCBit returns the tuple 
     (ek, y, b), 
   where ek is the evaluation key,
@@ -49,6 +44,15 @@ Module HCBit (P : HCParams).
                     y ::= (Samp (Unif ));
                     b ::= (Samp (Unif ))
                         ].
+
+  Parameter (lambda : nat).
+  Parameter HCBitSecurity : 
+    (forall {chan : Type -> Type} (c_ek : chan ek.-bv) y b, (HCBitReal c_ek y b) =a_(lambda, err1) (HCBitIdeal c_ek y b)).
+
+End HCBit.
+
+Module HCBitPair (Export P : HCBit).
+  
 
   (* HC Bit pair security:
    we prove that if the above two protocols are approximately equivalent, then the distribution
@@ -78,10 +82,9 @@ Module HCBit (P : HCParams).
                          b2 ::= (Samp Unif) ].
 
 
-  Lemma HCBitPair_security {chan} c_ek err :
-    (forall y b, (HCBitReal c_ek y b) =a_(err) (HCBitIdeal c_ek y b)) ->
+  Lemma HCBitPair_security {chan} c_ek :
     forall y1 y2 b1 b2,
-      (@HCBitPairReal chan c_ek y1 y2 b1 b2) =a_(err +e (comp_err err 3)) (HCBitPairIdeal c_ek y1 y2 b1 b2).
+      (@HCBitPairReal chan c_ek y1 y2 b1 b2) =a_(lambda, err1 +e (comp_err err1 3)) (HCBitPairIdeal c_ek y1 y2 b1 b2).
     intros.
     rewrite /HCBitPairReal.
     swap_tac 3 4.
@@ -90,7 +93,7 @@ Module HCBit (P : HCParams).
     setoid_rewrite <- newComp_r.
     setoid_rewrite <- newComp.
     setoid_rewrite <- newComp.
-    arewrite (H y1 b1).
+    arewrite (HCBitSecurity c_ek y1 b1).
     rewrite /HCBitIdeal.
     rewrite newComp_r.
     setoid_rewrite <- pars_cat; simpl.
@@ -103,7 +106,7 @@ Module HCBit (P : HCParams).
     setoid_rewrite (pars_split 5); simpl.
     setoid_rewrite <- newComp.
     setoid_rewrite <- newComp.
-    arewrite (H y2 b2).
+    arewrite (HCBitSecurity c_ek y2 b2).
     rewrite /HCBitIdeal.
     rewrite pars_pars; simpl.
     symmetry.
@@ -114,16 +117,6 @@ Module HCBit (P : HCParams).
     done.
     rewrite add_err0.
     rewrite /comp_err /add_err //=.
-    congr (_, _).
-    have -> : maxn err.2 (err.2 + 3) = err.2 + 3.
-    apply/maxn_idPr.
-    Search (?x <= ?x + ?y).
-    apply leq_addr.
-    symmetry.
-    apply/maxn_idPl.
-    rewrite !addnA.
-    Search (?x + ?y <= ?z + ?y).
-    rewrite !leq_add2r; apply leq_addr.
     apply _.
   Qed.
 
@@ -149,9 +142,8 @@ Module HCBit (P : HCParams).
 
 
 
-  Lemma withHCBitPairRealP {chan} f e bnd `{forall c1 y1 y2 b1 b2, IPDLBnd (f c1 y1 y2 b1 b2) bnd} :
-    (forall c_ek y b, (@HCBitReal chan c_ek y b) =a_(e) (HCBitIdeal c_ek y b)) ->
-    withHCBitPairReal f =a_(comp_err (e +e comp_err e 3) bnd) @withHCBitPairIdeal chan f.
+  Lemma withHCBitPairRealP {chan} f bnd `{forall c1 y1 y2 b1 b2, IPDLBnd (f c1 y1 y2 b1 b2) bnd} :
+    withHCBitPairReal f =a_(lambda, comp_err (err1 +e comp_err err1 3) bnd) @withHCBitPairIdeal chan f.
     intros.
     apply AEq_new; intros.
     apply AEq_new; intros.
@@ -159,7 +151,7 @@ Module HCBit (P : HCParams).
     apply AEq_new; intros.
     apply AEq_new; intros.
     eapply AEq_tr. 
-    arewrite (HCBitPair_security c (e) (fun y b => H0 c y b) c0 c1 c2 c3).
+    arewrite (HCBitPair_security c c0 c1 c2 c3).
     done.
     rewrite add_err0 addn0.
     done.
@@ -173,4 +165,4 @@ Module HCBit (P : HCParams).
     perm_match.
   Qed.
 
-End HCBit.
+End HCBitPair.

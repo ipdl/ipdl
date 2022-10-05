@@ -11,7 +11,7 @@ key exchange sub-protocol (here, DHKE, from DHKE.v).
 Alice and Bob first perform the DHKE to get a shared secret; then, they use the shared secret to perform a one-time pad. *)
 
 
-Module OTP_KE (Import P : DHKEParams).
+Module OTP_KE (Import P : DDH).
   Module M := KeyExchange(P).
   Import M.
 
@@ -255,8 +255,7 @@ Qed.
  
 
 (* We can replace the real DHKE protocol with the ideal one. *)
-Lemma OTPReal_equiv2 cin leak1 leak2 cout ok1 ok2 leak ok e :
-  (forall ddh_samp, @DDH0 chan ddh_samp =a_(e) DDH1 ddh_samp) ->
+Lemma OTPReal_equiv2 cin leak1 leak2 cout ok1 ok2 leak ok :
     (send <- new group ;;
     recv <- new group ;;
     keyA <- new group ;;
@@ -265,18 +264,17 @@ Lemma OTPReal_equiv2 cin leak1 leak2 cout ok1 ok2 leak ok e :
             Alice_otp keyA cin send;
             Bob_otp keyB recv cout;
             FAuth send recv leak ok;
-         DHKEReal keyA keyB leak1 leak2 ok1 ok2]) =a_(comp_err e 8)
+         DHKEReal keyA keyB leak1 leak2 ok1 ok2]) =a_(lambda, comp_err err1 8)
     (okA <- new unit ;; okB <- new unit ;;
      pars [::
              DHKESim ok1 ok2 okA okB leak1 leak2;
              OTPReal_hybrid cin leak cout ok okA okB]).
-  intro.
   atrans.
   Intro => send.
   Intro => recv.
   Intro => keyA.
   Intro => keyB.
-  arewrite (DHKE_security keyA keyB leak1 leak2 ok1 ok2 e H).
+  arewrite (DHKE_security keyA keyB leak1 leak2 ok1 ok2 ).
   apply AEq_zero.
   apply EqRefl.
   done.
@@ -334,9 +332,8 @@ Lemma OTPReal_equiv2 cin leak1 leak2 cout ok1 ok2 leak ok e :
 Qed.
 
 (* Finally, we show that the OTPReal protocol realizes OTPIdeal, with the simulators for DHKE (DHKESim) and OTP (OTPSim). *)
-Lemma OTP_security cin leak1 leak2 cout ok1 ok2 leak ok e :
-  (forall ddh_samp, @DDH0 chan ddh_samp =a_(e) DDH1 ddh_samp) ->
-  OTPReal cin leak1 leak2 cout ok1 ok2 leak ok =a_(comp_err e 8) (
+Lemma OTP_security cin leak1 leak2 cout ok1 ok2 leak ok :
+  OTPReal cin leak1 leak2 cout ok1 ok2 leak ok =a_(lambda, comp_err err1 8) (
     (okA <- new unit ;; okB <- new unit ;;
      t <- new unit ;; okI <- new unit ;;
      pars [:: DHKESim ok1 ok2 okA okB leak1 leak2; OTPIdeal cin cout t okI; OTPSim t leak okI ok okA okB])).
@@ -344,7 +341,6 @@ Lemma OTP_security cin leak1 leak2 cout ok1 ok2 leak ok e :
   rewrite OTPReal_equiv.
   atrans.
   apply OTPReal_equiv2.
-  apply H.
   apply AEq_zero.
   setoid_rewrite OTP_hybrid_secure.
   swap_tac 0 1.

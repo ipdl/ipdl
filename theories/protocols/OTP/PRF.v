@@ -40,7 +40,8 @@ Section OTP_PRF.
   Context {chan : Type -> Type}.
   Context (n a b : nat).
   Context (f : a.-bv -> 'I_n -> b.-bv) (gen : Dist a.-bv).
-  Context e (Hf : forall (o : n.-tuple (chan b.-bv)), PRF0 gen f o =a_(e) PRF1 o).
+  Context (l : nat).
+  Context e (Hf : forall (o : n.-tuple (chan b.-bv)), PRF0 gen f o =a_(l, e) PRF1 o).
 
   (* The definition of alice and bob are the same, since both perform the same operation (xor'ing with F(k, i). *)
   Definition OTP_prf_party
@@ -93,7 +94,7 @@ Section OTP_PRF.
             
 
   Theorem OTP_prf_security m o leak ok :
-    OTP_prf_real m o leak ok =a_(comp_err e (n*4))
+    OTP_prf_real m o leak ok =a_(l, comp_err e (n*4))
                                 (leakI <- newvec n @ unit ;;
                                 okI <- newvec n @ unit ;;
                                 pars [::

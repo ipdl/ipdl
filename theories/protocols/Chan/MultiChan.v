@@ -34,22 +34,11 @@ Definition Sec {chan} q n := @Net chan q n _ (fun _ => [tuple]).
 Definition FKey {chan} {k : nat} (genK : Dist k.-bv) (o : chan k.-bv) :=
   (o ::= (Samp genK)).
 
-Section MultiChan.
-  Context (msg ctxt key : nat).
-  Context (genK : Dist key.-bv).
-  Context (enc : msg.-bv -> key.-bv -> Dist ctxt.-bv).
-  Context (dec : ctxt.-bv -> key.-bv -> msg.-bv).
-  Context (q : nat).
-  Context {chan : Type -> Type}.
-
-
-  (* We assume that decryption is correct, and the 
- encryption scheme is CPA secure. *)
-  Context (Hdec : @dec_correct chan _ _ _ genK enc dec).
-  Context cpa_err (Henc : @CPA_Secure chan _ _ _ (tzero _) q genK enc cpa_err).
+Module MultiChan (Import P : CPA).
 
 
   (* Alice's output channels are  'send ## j', which connects to the authenticated channel. Alice takes as input the channels 'i ## j', which come from the environment. *)
+  Context (chan : Type -> Type).
 
   Definition alice (i : q.-tuple (chan msg.-bv)) (k : chan key.-bv) (send : q.-tuple (chan ctxt.-bv)) :=
     \||_(j < q) (send ## j) ::= (
@@ -90,7 +79,7 @@ Section MultiChan.
 
   (* We prove that the real protocol is approximately equivalent to the idel protocol connected to the simulator. *)
   Theorem MultiChan_Security i o leakR okR :
-    real i o leakR okR =a_(comp_err cpa_err q)
+    real i o leakR okR =a_(lambda, comp_err err1 q)
  (leakI <- newvec q @ 0.-bv ;; okI <- newvec q @ unit ;; pars [:: ideal i o leakI okI; Sim leakI okI leakR okR]).
 
 
@@ -146,7 +135,7 @@ Section MultiChan.
     apply EqRefl.
     simpl.
 
-    have h := (Henc i leakR).
+    have h := (CPA_security i leakR).
     rewrite /CPA1 in h.
     symmetry.
     etrans.

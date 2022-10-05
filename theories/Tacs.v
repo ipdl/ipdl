@@ -7,19 +7,18 @@ From mathcomp Require Import choice path bigop fintype.
 Require Import FunctionalExtensionality Classes.Equivalence.
 Require Import Lib.Base Ipdl.Exp Ipdl.Core Ipdl.Lems Lib.Dist Lib.Perm Lib.SeqOps Lib.TupleLems Lib.Set Ipdl.Big Ipdl.Approx Pars.
 
-
 Ltac Intro :=
   match goal with
     | |- EqProt (_ <- new _ ;; _) _ => apply EqCongNew
     | |- EqProt (_ <- newvec _ @  _ ;; _) _ => apply EqCongNew_vec
-    | |- AEqProt _ (_ <- new _ ;; _) _ => apply AEq_new
-    | |- AEqProt _ (_ <- newvec _ @  _ ;; _) _ => apply AEq_newvec
+    | |- AEqProt _ _ (_ <- new _ ;; _) _ => apply AEq_new
+    | |- AEqProt _ _ (_ <- newvec _ @  _ ;; _) _ => apply AEq_newvec
                                                    end.
 
 
 Ltac ensure_exact' t :=
 match goal with
-  | |- AEqProt _ _ _ => eapply exact_tr; [ t | ]
+  | |- AEqProt _ _ _ _ => eapply exact_tr; [ t | ]
   | _ => t end.
 
 Tactic Notation "ensure_exact" tactic(t) :=
@@ -83,7 +82,7 @@ Ltac focus2_with i j :=
 Ltac find_in_lhs p :=
   match goal with
     | [ |- EqProt (pars ?rs) _ ] => find_in_pars_rec p rs 0
-    | [ |- AEqProt _ (pars ?rs) _ ] => find_in_pars_rec p rs 0
+    | [ |- AEqProt _ _ (pars ?rs) _ ] => find_in_pars_rec p rs 0
   end.
 
 Ltac inline_tac x y :=
@@ -393,14 +392,14 @@ Ltac simp_all_rec rs i :=
 Ltac simp_all' :=
   unfold copy in *;
   match goal with
-  | [ |- AEqProt _ (pars ?xs) _ ] =>
+  | [ |- AEqProt _ _ (pars ?xs) _ ] =>
     eapply exact_tr; [ simp_all_rec xs 0 | ]
     | [ |- EqProt (pars ?xs) _ ] => simp_all_rec xs 0 end.
 
 Ltac simp_all :=
   match goal with
     | |- EqProt _ _ => simp_all'
-    | |- AEqProt _ _ _ => simp_all'; [ apply EqRefl | ]
+    | |- AEqProt _ _ _ _ => simp_all'; [ apply EqRefl | ]
                                        end.
 
 Ltac align_step :=
