@@ -1,7 +1,7 @@
 ## Installation instructions
 
 `IPDL` currently requires Coq `8.14.1`. Assuming `opam` is installed, perform
-the following in the root directory to install Coq and required dependencies, and build IPDL:
+the following in the root directory to install Coq and required dependencies, and build the Coq files for IPDL along with the case studies:
 ```
 opam pin add coq 8.14.1
 opam repo add coq-released https://coq.inria.fr/opam/released
