@@ -4,6 +4,7 @@
 Require Import List.
 From mathcomp Require Import ssreflect ssrbool ssrnat eqtype seq tuple ssrfun.
 From mathcomp Require Import choice path bigop fintype.
+Require Import Permutation Typ Lib.SeqOps.
 Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Ipdl.Tacs Lib.Dist Lib.Base Pars.
 Require Import HCBit OTIdeal Ipdl.Approx.
 
@@ -560,7 +561,6 @@ Qed.
     rewrite /comp_err //=.
   Qed.
 
-  Require Import Permutation Typ Lib.SeqOps.
 
   Lemma OT_trapdoor_t :
     ipdl_t [:: tag o; tag leaky0; tag leaky1; tag leakEK; tag leakd01] OT_trapdoor.

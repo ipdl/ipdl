@@ -17,7 +17,6 @@ From mathcomp Require Import choice path bigop fintype.
 Require Import Lib.Base Ipdl.Exp Ipdl.Core Ipdl.Lems Lib.TupleLems Lib.Dist Ipdl.Tacs Pars Big.
 Require Import OTIdeal Lib.Set Typ Lib.SeqOps.
 Require Import Permutation.
-Check Perm_swap.
 
 Open Scope bool_scope.
 

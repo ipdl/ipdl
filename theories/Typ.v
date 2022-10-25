@@ -5,11 +5,7 @@ Require Import FunctionalExtensionality Classes.Equivalence.
 Require Import Lib.Base Ipdl.Exp Lib.TupleLems Lib.setoid_bigop.
 Require Import Lib.Crush Core Lems Lib.Set Pars Big Lib.OrdLems Lib.SeqOps.
 Require Import Lib.Perm.
-
-
-
 Require Import Sorting.Permutation.
-Check Permutation.
 
 Section Typ.
   Context {chan : Type -> Type}.
@@ -137,17 +133,31 @@ Ltac type_tac :=
     | [ |- ipdl_t  _ (Outvec _ _)] => apply Outvec_t
                end).
 
+#[global]
 Hint Resolve Permutation_app_comm : perm.
+#[global]
 Hint Resolve Permutation_app_tail : perm.
+#[global]
 Hint Resolve Permutation_app_head : perm.
+#[global]
 Hint Resolve Permutation_app : perm.
+#[global]
 Hint Resolve Permutation_add_inside : perm.
+#[global]
 Hint Resolve Permutation_cons_append : perm.
+#[global]
 Hint Resolve Permutation_app_rot : perm.
+#[global]
 Hint Resolve Permutation_app_swap_app : perm.
+#[global]
 Hint Resolve Permutation_app_middle : perm.
+#[global]
 Hint Resolve Permutation_cons_app : perm.
+#[global]
 Hint Resolve Permutation_elt : perm.
+#[global]
 Hint Resolve Permutation_middle : perm.
+#[global]
 Hint Resolve Permutation_refl : perm.
+#[global]
 Hint Constructors Permutation : perm.

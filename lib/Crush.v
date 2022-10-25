@@ -110,6 +110,7 @@ Ltac rewriterP := repeat (rewriteHyp; autorewrite with core in *).
 Ltac rewriter := autorewrite with core in *; rewriterP.
 
 (** This one is just so darned useful, let's add it as a hint here. *)
+#[global]
 Hint Rewrite app_ass.
 
 (** Devious marker predicate to use for encoding state within proof goals *)

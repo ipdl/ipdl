@@ -29,6 +29,7 @@ Lemma eqvxx (X : setoid) (x : X) : x ≡ x. reflexivity. Qed.
 Arguments eqvxx {X x}.
 
 (** This allows [trivia] (and hence [done]) to solve [x ≡ x]. *)
+#[global]
 Hint Extern 0 => reflexivity : core.
 
 Class monoidLaws {X : setoid} (mon0 : X) (mon2 : X -> X -> X) :=

@@ -27,7 +27,7 @@ Fixpoint seq_split {A} (n : nat) (xs : seq A) : seq A * seq A :=
 Lemma seq_splitE  {A} n (xs : seq A) : (seq_split n xs).1 ++ (seq_split n xs).2 = xs.
   move: xs; induction n.
   done.
-  induction 0.
+  induction xs.
   done.
   simpl.
   rewrite -{3}(IHn xs) //=.
@@ -642,6 +642,7 @@ Qed.
 Require Import Setoid Relation_Definitions Morphisms.
 Close Scope bool_scope.
 
+#[export]
 Instance cat_Proper t : Proper (@Permutation t ==> @Permutation t ==> @Permutation t) cat.
   move => x y z a b c.
   rewrite z c //=.

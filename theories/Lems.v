@@ -6,10 +6,6 @@ From mathcomp Require Import choice path bigop fintype.
 Require Import FunctionalExtensionality Classes.Equivalence.
 Require Import Lib.Base Ipdl.Exp Ipdl.Core Lib.Perm Lib.setoid_bigop Lib.OrdLems Lib.TupleLems Lib.Set Classical Big Pars.
 
-Print Core.
-
-Print ipdl.
-Print ipdl_t.
 Open Scope bool.
 
 

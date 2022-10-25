@@ -44,6 +44,7 @@ Lemma withOT14_irrel {chan} L r :
   rewrite pars1 //=.
 Qed.
 
+#[global]
 Instance withOT14_NewLike chan L : NewLike chan (withOT14 L).
    constructor.
    intros.

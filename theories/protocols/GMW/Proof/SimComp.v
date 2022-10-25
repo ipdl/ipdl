@@ -2,6 +2,7 @@
 Require Import List.
 From mathcomp Require Import ssreflect ssrbool ssrnat eqtype seq tuple ssrfun fintype.
 From mathcomp Require Import choice path bigop.
+Require Import Typ Lib.Perm Lib.SeqOps.
 Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Lib.Dist Ipdl.Tacs Lib.setoid_bigop Ipdl.Tacs Lib.Crush Lib.Set Ipdl.Big Pars. 
 
 Require Import GMWIdeal OTIdeal Circ GMWReal IdealSimpl.
@@ -160,7 +161,6 @@ Lemma GMWIdeal_simE {A B n o} `{Inhabited 'I_A} `{Inhabited 'I_B} `{Inhabited 'I
   etransitivity.
   swap_tac 0 1.
   repeat setoid_rewrite newPars.
-  Check newPars.
   setoid_rewrite pars_pars; simpl.
   swap_tac 0 8.
   rewrite /GMWIdeal.
@@ -261,7 +261,6 @@ Lemma GMWIdeal_simE {A B n o} `{Inhabited 'I_A} `{Inhabited 'I_B} `{Inhabited 'I
   done.
 Qed.
 
-Require Import Typ Lib.Perm Lib.SeqOps.
 
 Definition GMWSim_t {A B n o} (c : Circ A B n) (outs : circOuts n o)
            (I_a2advI : A.-tuple (chan bool))

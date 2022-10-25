@@ -52,7 +52,7 @@ Parameter (CPA_security :
 the tuple (k, c, o) where k is a random key, c is an encryption of some message on an input channel i, 
 and o is the decryption of c, is equivalent to the tuple (k, c, i). *)
 
-Definition dec_correct_def  := forall {chan : Type -> Type} (k : chan key.-bv) (c : chan ctxt.-bv) (i : chan msg.-bv) (o : chan msg.-bv),
+Definition dec_correct_def  := forall (chan : Type -> Type) (k : chan key.-bv) (c : chan ctxt.-bv) (i : chan msg.-bv) (o : chan msg.-bv),
     pars [::
             k ::= (Samp genK);
             c ::= (x <-- Read k ;; m <-- Read i ;; c <-- Samp (enc m x) ;; Ret c);

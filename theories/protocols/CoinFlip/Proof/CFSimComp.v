@@ -288,7 +288,6 @@ Section SimComp.
   Context (advCommitted : n.-tuple (n.-tuple (chan unit))).
   Context (advOpened : n.-tuple (n.-tuple (chan k.-bv))).
 
-  Check CFIdeal.
   
   Definition SimComp (out : n.-tuple (chan k.-bv)) :=
     leakB <- new k.-bv ;;
@@ -305,8 +304,6 @@ Section SimComp.
                  x <- Read send ;;
                  Ret x)
   *)
-
-  Print CFIdealFunc.
 
   Definition SimComp_simpl1 (out : n.-tuple (chan k.-bv)) :=
     leak <- new k.-bv ;;

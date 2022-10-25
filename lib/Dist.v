@@ -83,6 +83,7 @@ Lemma uniform_Unif n : uniform (Unif_bv n).
                           rewrite IHn //=.
 Qed.
 
+#[export]
 Instance unif_bv (n : nat) : unif [finType of n.-tuple bool] :=
   {
   Unif := Unif_bv n;
@@ -96,6 +97,7 @@ Lemma uniform_boolP : uniform uniform_bool.
   rewrite !big_cons big_nil; destruct x; rewrite //=.
 Qed.
   
+#[export]
 Instance unif_bool : unif [finType of bool] :=
   {
   Unif := uniform_bool;
@@ -148,6 +150,7 @@ Lemma Unif_pair_unif X Y `{unif X} `{unif Y} :
     rewrite e mulnC //=.
 Qed.
 
+#[export]
 Instance unif_pair X Y `{unif X} `{unif Y} : unif [finType of X * Y] :=
   {|
     Unif := Unif_pair X Y;

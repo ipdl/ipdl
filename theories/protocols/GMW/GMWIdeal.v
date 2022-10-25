@@ -39,8 +39,6 @@ End IdealGMW.
 Definition deliverOuts {chan : Type -> Type} {n o} (outs : circOuts n o) (w : n.-tuple (chan bool)) (out : o.-tuple (chan bool)) :=
   Outvec out (fun j => copy (tnth w (tnth outs j))).
 
-Check evalCirc.
-
 Definition Funct {chan : Type -> Type} {A B n O : nat}
            (inA : A.-tuple (chan bool))
            (inB : B.-tuple (chan bool))

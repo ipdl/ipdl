@@ -7,6 +7,7 @@ our reasoning to be about N-ary composition (with prefix 'pars').
 From mathcomp Require Import ssreflect ssrbool ssrnat eqtype ssrfun seq tuple fintype.
 From mathcomp Require Import choice path bigop.
 Require Import FunctionalExtensionality Classes.Equivalence.
+Require Import Lib.SeqOps.
 Require Import Lib.Base Ipdl.Exp Lib.TupleLems Lib.setoid_bigop.
 Require Import Lib.Crush Lib.Set Core.
 
@@ -198,7 +199,6 @@ Instance list_eqprot_sym : Symmetric list_eqprot.
 Qed.
 
 
-Require Import Lib.SeqOps.
 
 Lemma swapE  n k rs :
   EqProt (pars rs) (pars (swap n k rs)).

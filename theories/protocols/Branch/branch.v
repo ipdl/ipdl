@@ -6,7 +6,6 @@ From mathcomp Require Import choice path bigop fintype.
 Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Ipdl.Tacs Lib.Dist Ipdl.Big Pars Lib.Set Ipdl.Approx.  
 
 (* some lemmas about EqSplitBranch *)
-Check EqSplitBranch.
 Require Import Lib.SeqOps Lib.Perm Permutation.
 
 

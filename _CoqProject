@@ -1,5 +1,7 @@
 -Q lib Lib
 -R theories Ipdl
+-arg "-w '-notation-overridden'"
+-arg "-w '-ambiguous-paths'"
 lib/Crush.v
 lib/Base.v
 lib/Set.v
@@ -33,8 +35,6 @@ theories/protocols/OT/OTPreprocess.v
 theories/protocols/OT/TrapdoorOT.v
 theories/protocols/OT/OutOf4.v
 
-
-
 theories/protocols/OTP/PRF.v
 theories/protocols/Branch/branch.v
 
@@ -54,4 +54,3 @@ theories/protocols/GMW/GMWReal.v
 theories/protocols/GMW/Proof/RealCleanup.v
 theories/protocols/GMW/Proof/SimComp.v
 theories/protocols/GMW/Proof/RealIdeal.v
-

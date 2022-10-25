@@ -69,8 +69,6 @@ Lemma perm_eq_Perm {A : eqType} (xs ys : seq A) :
   done.
 Qed.
 
-Check Permutation_ind.
-
 Lemma perm_ind {A : eqType} (P : seq A -> seq A -> Prop) :
   (P nil nil) ->
   (forall x xs ys, perm_eq xs ys -> P xs ys -> P (x :: xs) (x :: ys)) ->

@@ -9,14 +9,23 @@ Notation "f $ x" := (f x) (at level 60, right associativity, only parsing).
 Class Inhabited A :=
   witness : A.
 
+#[global]
 Instance inhabit_bool : Inhabited bool := false.
+#[global]
 Instance inhabit_unit : Inhabited unit := tt.
+#[global]
 Instance inhabit_prod A B `{Inhabited A} `{Inhabited B} : Inhabited (A * B) := (witness, witness).
+#[global]
 Instance inhabit_tup A `{Inhabited A} {n} : Inhabited (n.-tuple A) := [tuple of nseq n witness].
+#[global]
 Instance inhabit_seq A : Inhabited (seq A) := nil.
+#[global]
 Instance inhabit_fun A B `{Inhabited B} : Inhabited (A -> B) := fun _ => witness.
+#[global]
 Instance inhabit_nat : Inhabited nat := 0.
+#[global]
 Instance inhabit_matrix A `{Inhabited A} {n m} : Inhabited 'M[A]_(n, m) := const_mx witness.
+#[global]
 Instance inhabit_ord n : Inhabited 'I_(n.+1) :=
   ord0.
 

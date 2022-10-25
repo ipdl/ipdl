@@ -201,6 +201,7 @@ Open Scope bool_scope.
              c <- new t ;; f (fun x => k x c)                                    
        }.
 
+     #[global]
      Instance New_NewLike {C} t : NewLike C (New t).
        constructor.
        intros.
@@ -221,6 +222,7 @@ Open Scope bool_scope.
          intros; apply EqCompComm.
      Qed.
 
+     #[global]
      Instance newlike_mor chan A f `{NewLike chan A f} :
        Proper (pointwise_relation _ EqProt ==> EqProt) f.
         move => k1 k2 h.
@@ -239,6 +241,7 @@ Open Scope bool_scope.
 Canonical ipdl_setoid {C} : Setoid.setoid :=
   {| Setoid.car := @ipdl C; Setoid.eqv := EqProt |}.
 
+     #[global]
 Instance rset_setoid_monoidLaws {C} : @Setoid.monoidLaws (ipdl_setoid) prot0 (@Par C).
     constructor.
     apply _.
@@ -255,6 +258,7 @@ Instance rset_setoid_monoidLaws {C} : @Setoid.monoidLaws (ipdl_setoid) prot0 (@P
     rewrite -eq_par0; reflexivity.
 Qed.
 
+     #[global]
 Instance ipdl_setoid_comMonoid {C} : @Setoid.comMonoidLaws (ipdl_setoid) prot0 (@Par C).
     constructor.
     apply _.

@@ -6,12 +6,6 @@ Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Lib.Di
 
 Require Import GMWIdeal OTIdeal Circ GMWReal .
 
-Search withOT14.
-
-Check withOTs.
-
-Print NewLike.
-
 Section RealCleanup.
   Context {chan : Type -> Type}.
   Open Scope bool_scope.
@@ -33,7 +27,6 @@ Global Instance NewLike_withOTs L o : NewLike chan (withOTs L o).
   rewrite newComp; Intro => ins.
   rewrite newComp; Intro => m.
   rewrite newComp; Intro => o0.
-  Search (pars _ ||| _).
   rewrite pars_rcons /rcons //=.
   swap_tac 0 2.
   symmetry; swap_tac 0 1.

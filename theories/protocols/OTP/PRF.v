@@ -1,6 +1,7 @@
 Require Import List.
 From mathcomp Require Import ssreflect ssrbool ssrnat eqtype seq tuple ssrfun.
 From mathcomp Require Import choice path bigop fintype.
+Require Import Permutation Lib.SeqOps.
 Require Import Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Ipdl.Tacs Lib.Base Ipdl.Big Pars Lib.Set Typ Approx Lib.Dist.
 
 (* This file proves that the construction
@@ -225,16 +226,12 @@ Section OTP_PRF.
     r_swap 0 1; done.
     rewrite !add_err0.
     rewrite !addn0.
-    Check mulnDl.
     rewrite -!mulnDl.
     rewrite muln1.
-    Search (?x + ?x).
     rewrite addnn -muln2.
-    Search (?x * ?y + ?x).
     rewrite -mulnSr addnC -mulnSr //=.
 Qed.
 
-  Require Import Permutation Lib.SeqOps.
 
   (* Some sanity checks on the typing *)
   Lemma OTP_prf_real_t m o leak ok :

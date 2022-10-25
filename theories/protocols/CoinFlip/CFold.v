@@ -325,7 +325,6 @@ Lemma new_cfold_remove {n} {t t'} (xs : (n.+1).-tuple (chan t)) (f : t' -> t -> 
           cfold xs f init ys & rs] =p pars rs.
   intros.
   rewrite /cfold.
-  Check pars_big_remove.
   rewrite /cfold_body.
   rewrite pars_big_remove_dep_vec //=.
 Qed.

@@ -8,8 +8,15 @@
 
 From mathcomp Require Import ssreflect ssrbool ssrnat eqtype ssrfun seq tuple fintype.
 From mathcomp Require Import choice path bigop.
+Require Import Lib.setoid_bigop.
 Require Import FunctionalExtensionality Classes.Equivalence.
+Require Import Permutation.
 Require Import Lib.Base Ipdl.Exp Lib.TupleLems Lib.setoid_bigop.
+Require Import Setoid Relation_Definitions Morphisms.
+Require Import Lib.SeqOps.
+Require Import Lia.
+
+From AAC_tactics Require Import AAC.
 Require Import Lib.Crush Lib.Set Core Lib.OrdLems Classical Pars.
 
 Reserved Notation "\||_ ( i <- r | P ) F"
@@ -224,9 +231,7 @@ Qed.
       rewrite IHxs //=.
     Qed.
     
-    Require Import Lib.setoid_bigop.
     
-    Print big_cat_nat.
     
     (* From mathcomp *)
     Lemma iotaD m n1 n2 : iota m (n1 + n2) = iota m n1 ++ iota (m + n1) n2.
@@ -523,7 +528,6 @@ Lemma EqCongNew_vec {I} {t} (r1 r2 : I.-tuple (chan t) -> ipdl) :
   intros; apply H.
 Qed.
 
-Require Import Setoid Relation_Definitions Morphisms.
 Close Scope bool_scope.
 
 Add Parametric Morphism t I : (newvec I t)
@@ -538,7 +542,6 @@ Qed.
 
 Open Scope bool_scope.
 
-Require Import Permutation.
 
 Lemma Bigpar_t' {n} (f : 'I_n -> ipdl) (o : 'I_n -> seq (@tagged chan)) O :
   (forall (i : 'I_n), ipdl_t (o i) (f i)) -> 
@@ -551,7 +554,7 @@ Lemma Bigpar_t' {n} (f : 'I_n -> ipdl) (o : 'I_n -> seq (@tagged chan)) O :
   apply zero_t.
 
   rewrite big_ord_recl.
-  rewrite enum_ordS.
+  rewrite enum_ordSl.
   simpl.
   eapply par_t.
   apply H0.
@@ -591,9 +594,6 @@ Qed.
 
 (* Lifting of logic to vectors *)
 
-Require Import Lib.SeqOps.
-
-From AAC_tactics Require Import AAC.
 
 Lemma pars_big_fold {n} {t1 t2} (o : n.-tuple (chan t2)) (ri : 'I_n -> rxn t1) (ro : 'I_n -> t1 -> rxn t2) rs :
   c <- newvec n @ t1 ;;
@@ -702,7 +702,6 @@ Lemma bigpar_ord_recr_cond {n} (f : _ -> @ipdl chan) p  :
   done.
 Qed.
 
-Require Import Lia.
 
 Ltac ssr_lia :=
   repeat match goal with
@@ -1188,6 +1187,7 @@ Add Parametric Morphism {chan} t I : (@newvec chan I t)
 Qed.
 
 (* Fix for global instances *)
+#[global]
 Instance newlike_tup2 {chan} n t : NewLike chan (@newvec chan n t).
   constructor.
   - intros; induction n.

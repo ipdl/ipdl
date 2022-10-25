@@ -29,9 +29,6 @@ Section GenOTChannels.
       ot_leakBit : chan bool (* Leakage channel for alice *)
                   }.
 
-  Print withOT14.
-  Check mktuple.
-
   Definition withOTs L (leak : L.-tuple (chan bool)) (P : L.-tuple (OTChannels) -> @ipdl chan) : @ipdl chan :=
     ins <- newvec L @ (bool * bool);;
     m <- newvec L @ ((bool * bool) * (bool * bool));;

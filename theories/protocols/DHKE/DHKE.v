@@ -188,7 +188,6 @@ Lemma DHKE1 (outA outB leak1 leak2 : chan group) (ok1 ok2 : chan unit) :
   setoid_rewrite (EqNewExch group sk).
   setoid_rewrite (EqNewExch group sk) at 2.
   swap_tac 0 1.
-  Check new_pars_remove.
   under_new rewrite new_pars_remove.
   apply EqRefl.
   repeat set_tac.
