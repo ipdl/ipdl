@@ -131,11 +131,13 @@ Qed.
 
 Require Import RelationClasses.
 
+#[global]
 Instance refl_aeq {chan} {l} : Reflexive (@AEqProt chan l err0).
    intro.
    apply AEq_zero; done.
 Qed.
 
+#[global]
 Instance sym_aeq {chan}  {l} e : Symmetric (@AEqProt chan l e).
    intros x y.
    move/AEq_sym; done.
@@ -145,6 +147,7 @@ Require Import Setoid Relation_Definitions Morphisms.
 Close Scope bool_scope.
 
 (* This allows me to rewrite using exact equalities *)
+#[global]
 Instance proper_aeqprot {chan} {l} : Proper (eq ==> EqProt ==> EqProt ==> Basics.flip Basics.impl) (@AEqProt chan l).
     repeat intro. 
     eapply AEq_tr.
@@ -166,16 +169,19 @@ Lemma rewrite_RewritesWith {chan} {l} {x y} {e e'} (h : x =a_(l, e) y) p q `{Rew
     apply rewr_witness.
 Qed.
 
+#[global]
 Instance RewritesWith_id {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e) y) : RewritesWith x y e h x y e.
     apply h.
 Qed.
 
+#[global]
 Instance RewritesWith_comp_l {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e) y) (p : ipdl) bnd `{IPDLBnd _ p bnd} : RewritesWith x y e h (x ||| p) (y ||| p) (comp_err e bnd).
     apply AEq_comp.
     apply h.
     destruct H; done.
 Qed.
 
+#[global]
 Instance RewritesWith_comp_r {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e) y) p bnd `{IPDLBnd _ p bnd} : RewritesWith x y e h (p ||| x) (p ||| y) (comp_err e bnd).
     rewrite /RewritesWith.
     rewrite EqCompComm.
@@ -185,6 +191,7 @@ Instance RewritesWith_comp_r {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e) y)
     destruct H; done.
 Qed.
 
+#[global]
 Instance RewritesWith_pars_head {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e) y) ps bnd `{IPDLBnd _ (pars ps) bnd} :
   RewritesWith x y e h (pars (x :: ps)) (pars (y :: ps)) (comp_err e bnd).
    rewrite /RewritesWith.
@@ -194,6 +201,7 @@ Instance RewritesWith_pars_head {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e)
    done.
 Qed.
 
+#[global]
 Instance RewritesWith_pars_cons {chan} {l} (x : @ipdl chan) y e (h : x =a_(l, e) y) ps qs p e' `{RewritesWith chan l x y e h (pars ps) (pars qs) e'} bnd `{IPDLBnd _ p bnd} :
    RewritesWith x y e h (pars (p :: ps)) (pars (p :: qs)) (comp_err e' bnd).
    rewrite /RewritesWith.
