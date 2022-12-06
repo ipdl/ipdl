@@ -6,6 +6,7 @@ Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Lib.Di
 Require Import OTIdeal.
 
 Require Import Setoid Relation_Definitions Morphisms.
+Require Import Permutation Typ Lib.SeqOps.
 Close Scope bool_scope.
 
   Lemma samp_pair {chan} {t'} {t : finType} `{unif t} `{Inhabited t'} `{Inhabited t} (x : chan t') (c d : chan t) :
@@ -929,7 +930,6 @@ Theorem OT14_security :
   done.
 Qed.
 
-Require Import Permutation Typ Lib.SeqOps.
 
 Definition ot14_chans := 
 [:: tag ot14_o; tag leak_ot_o1; tag leak_ot_o2; tag leak_ot_o3; tag leak_send].

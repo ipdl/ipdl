@@ -1,5 +1,4 @@
 From mathcomp Require Import ssreflect ssrbool ssrnat eqtype ssrfun seq.
-Require Import Lib.Crush.
 Require Import Classical FunctionalExtensionality PropExtensionality.
 
 (* A library for classical sets. *) 
@@ -138,7 +137,7 @@ Lemma in_listP {A} (l : list A) x :
   move: x.
   induction l.
   simpl.
-  crush.
+  firstorder.
   simpl.
   intros.
   split.
@@ -154,7 +153,6 @@ Lemma in_app_union {A} (l1 l2 : list A) x :
   (list_set (l1 ++ l2)) x <-> union l1 l2 x.
   split.
   induction l1.
-  crush.
   right; done.
   simpl.
   intros.
@@ -164,8 +162,7 @@ Lemma in_app_union {A} (l1 l2 : list A) x :
   right; done.
   left; right; done.
   induction l1.
-  crush.
-  destruct H; done.
+  simpl in *; case; firstorder.
   intros; simpl in *.
   destruct H.
   destruct H.

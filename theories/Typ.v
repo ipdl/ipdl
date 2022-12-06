@@ -3,7 +3,7 @@ From mathcomp Require Import ssreflect ssrbool ssrnat eqtype ssrfun seq tuple fi
 From mathcomp Require Import choice path bigop.
 Require Import FunctionalExtensionality Classes.Equivalence.
 Require Import Lib.Base Ipdl.Exp Lib.TupleLems Lib.setoid_bigop.
-Require Import Lib.Crush Core Lems Lib.Set Pars Big Lib.OrdLems Lib.SeqOps.
+Require Import Core Lems Lib.Set Pars Big Lib.OrdLems Lib.SeqOps.
 Require Import Lib.Perm.
 Require Import Sorting.Permutation.
 

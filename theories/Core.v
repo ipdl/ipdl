@@ -2,7 +2,7 @@ From mathcomp Require Import ssreflect ssrbool ssrnat eqtype ssrfun seq tuple fi
 From mathcomp Require Import choice path bigop ssrnum ssralg.
 Require Import FunctionalExtensionality Classes.Equivalence.
 Require Import Lib.Base Ipdl.Exp Lib.TupleLems Lib.setoid_bigop.
-Require Import Lib.Crush Lib.Set.
+Require Import Lib.Set.
 
 (* IPDL protocols. Note that the New combinator takes in a *coq function*, thus giving us a higher-order syntax. Since 'chan' is an abstract type, we are guaranteed that these coq functions can only 'pass around' channels, but not inspect them in any way.*)
 Inductive ipdl {chan} : Type :=

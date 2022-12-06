@@ -116,15 +116,6 @@ Ltac unused_tac y x :=
   swap_tac 1 j;
   rewrite pars_unused //=.
 
-
-
-
-
-Require Import Lib.Crush.
-
-
-Require Import Lib.Crush.
-
 Ltac rename_to j :=
   match goal with
   | [ |- (newvec ?i ?t ?k) =p ?h] =>

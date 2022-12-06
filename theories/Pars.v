@@ -9,7 +9,7 @@ From mathcomp Require Import choice path bigop.
 Require Import FunctionalExtensionality Classes.Equivalence.
 Require Import Lib.SeqOps.
 Require Import Lib.Base Ipdl.Exp Lib.TupleLems Lib.setoid_bigop.
-Require Import Lib.Crush Lib.Set Core.
+Require Import Lib.Set Core.
 
 Definition pars_def {C} (r : list (@ipdl C)) : ipdl := foldr Par (prot0) r.
 

@@ -17,7 +17,7 @@ Require Import Lib.SeqOps.
 Require Import Lia.
 
 From AAC_tactics Require Import AAC.
-Require Import Lib.Crush Lib.Set Core Lib.OrdLems Classical Pars.
+Require Import Lib.Set Core Lib.OrdLems Classical Pars.
 
 Reserved Notation "\||_ ( i <- r | P ) F"
   (at level 41, F at level 41, i, r at level 50,

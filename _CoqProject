@@ -2,7 +2,6 @@
 -R theories Ipdl
 -arg "-w '-notation-overridden'"
 -arg "-w '-ambiguous-paths'"
-lib/Crush.v
 lib/Base.v
 lib/Set.v
 lib/Perm.v

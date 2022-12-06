@@ -3,7 +3,7 @@ Require Import List.
 From mathcomp Require Import ssreflect ssrbool ssrnat eqtype seq tuple ssrfun fintype.
 From mathcomp Require Import choice path bigop.
 Require Import Typ Lib.Perm Lib.SeqOps.
-Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Lib.Dist Ipdl.Tacs Lib.setoid_bigop Ipdl.Tacs Lib.Crush Lib.Set Ipdl.Big Pars. 
+Require Import Lib.Base Ipdl.Exp Ipdl.Core String Ipdl.Lems Lib.TupleLems Lib.Dist Ipdl.Tacs Lib.setoid_bigop Ipdl.Tacs Lib.Set Ipdl.Big Pars. 
 
 Require Import GMWIdeal OTIdeal Circ GMWReal IdealSimpl.
 

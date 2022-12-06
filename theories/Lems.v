@@ -30,7 +30,7 @@ Add Parametric Relation {C} : (@ipdl C) (RPerm)
 
 
 Close Scope bool_scope.
-Require Import Setoid Relation_Definitions Lib.Crush.
+Require Import Setoid Relation_Definitions.
 
 Add Parametric Morphism {C} : (@Par C)
    with signature RPerm ==> RPerm ==> RPerm as par_perm_mor.
@@ -63,8 +63,6 @@ Qed.
 Lemma andT p : (p /\ True) <-> p.
   intuition.
 Qed.
-  
-Require Import Lib.Crush.
   
 Lemma RPerm_EqProt {C} r1 r2 :
     RPerm r1 r2 -> @EqProt C r1 r2.
